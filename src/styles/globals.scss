@@ -1,0 +1,115 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --submenu-height: auto;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+  }
+}
+
+body {
+}
+
+//custom sidebar
+.css-16jesut{
+  .ps-menu-button{
+    &:hover{
+      background-color: #1563fd !important;
+    }
+  }
+  .css-ewdv3l{
+    .ps-menu-button{
+      background-color: #5A9DFF;
+      &:hover{
+        background-color: #4d94ff !important;
+      }
+    }
+    .ps-active {
+      background-color: #3786fe;
+      &:hover{
+        background-color: #3786fe !important;
+      }
+    }
+  }
+}
+
+.css-1t8x7v1 {
+  .ps-menu-button{
+    &:hover{
+      background-color: #0c5dff !important;
+    }
+  }
+  .ps-active {
+    background-color: #0054fc;
+    &:hover{
+      background-color: #0054fc !important;
+    }
+  }
+}
+
+.css-1654oxy {
+  .ps-menu-button{
+    &:hover{
+      background-color: #0c5dff !important;
+    }
+  }
+  .ps-active {
+    background-color: #0054fc;
+    &:hover{
+      background-color: #0054fc !important;
+    }
+  }
+}
+
+.css-16jesut{
+  .collapsed-subMenu{
+    background-color: #0555f5;
+    &:hover{
+      background-color: #0555f5 !important;
+    }
+  }
+  // position: relative;
+  // .css-uyo6hb{
+  //   top: calc(var(--submenu-height) / 2 + 50px) !important;
+  //   width: fit-content;
+  // }
+}
+
+.collapsed-menu{
+  .ps-submenu-root{
+    .ps-submenu-content{
+      transform: translate3d(84px, --submenu-height, 0px) !important;
+    }
+  }
+}
+
+.ps-collapsed{
+  .ps-sidebar-container{
+    overflow-x: auto;
+  }
+}
+
+//scroll bar
+::-webkit-scrollbar {
+  width: 8px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background-color: #606060db;
+  &:hover{
+    background-color: #6060608c;
+  }
+  transition-property: background-color;
+  transition-timing-function: ease;
+  transition-duration: 250ms;
+}

@@ -1,0 +1,7 @@
+.container {
+  @apply p-12;
+}
+
+.spacing {
+  @apply mb-8 mt-[20px];
+}

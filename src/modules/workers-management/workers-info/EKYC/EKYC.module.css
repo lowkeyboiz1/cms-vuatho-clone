@@ -1,0 +1,11 @@
+.tabContent {
+  @apply group-data-[selected=true]:text-white font-[600] text-base;
+}
+
+.displayFlexPaperTab {
+  @apply flex gap-5 w-full;
+}
+
+.widthFormPaperTab {
+  @apply w-1/4;
+}
