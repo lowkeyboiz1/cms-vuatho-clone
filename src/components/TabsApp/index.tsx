@@ -1,4 +1,4 @@
-import { Tabs, Tab, CardBody, Card } from '@nextui-org/react'
+import { Tabs, Tab } from '@nextui-org/react'
 
 import styles from './TabsApp.module.css'
 
@@ -16,7 +16,7 @@ function TabsApp({
   cursorCss = '',
   tabListCss = '',
 }: {
-  tabs: TabsAppType
+  tabs: any
   baseCss?: any
   tabCss?: any
   positionLineCss?: any
