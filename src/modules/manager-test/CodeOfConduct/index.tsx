@@ -201,11 +201,11 @@ function CodeOfConduct(this: any) {
     },
   ]
 
-  const [id, sId] = useState<any>()
+  const [id, setId] = useState<any>()
 
   const _handleSelect = (id: any) => {
     onOpen()
-    sId(id)
+    setId(id)
   }
   const handleDelete = (id: number) => {
     const updatedListQuestionAdd = listData.listQuestionAdd.filter(
@@ -269,15 +269,38 @@ function CodeOfConduct(this: any) {
   }
   const [arrChecked, setArrChecked] = useState<any[]>([])
 
+  const [select, setSelect] = useState<boolean>(false)
+
+  const [listSelected, setListSelected] = useState([])
+
   return (
     <>
       <div className="flex justify-between mt-[20px]">
-        <div className="">
+        <div className={listSelected.length > 0 ? 'hidden' : 'block'}>
           <Button
+            onClick={() => setSelect(!select)}
+            // 'text-base-drak-gray bg-transparent'3748a0
             size="md"
-            className="rounded-[16px] px-[42px] text-base-drak-gray bg-transparent border-[2px] border-base-gray-2"
+            style={{
+              background: select ? '#babef4' : 'transparent',
+            }}
+            className={`rounded-[16px] px-[42px] ${
+              select
+                ? 'text-[#3748a0] '
+                : 'text-base-drak-gray border-[2px] border-base-gray-2'
+            }`}
           >
             Chọn
+          </Button>
+        </div>
+        <div className={listSelected.length > 0 ? 'block' : 'hidden'}>
+          <Button
+            onClick={() => {}}
+            size="md"
+            className="border-[2px] bg-transparent font-semibold block"
+            style={{ color: '#fe7434', borderColor: '#ff4343' }}
+          >
+            Xóa<span className="">({listSelected?.length})</span>
           </Button>
         </div>
         <div className="flex gap-4">
@@ -309,6 +332,8 @@ function CodeOfConduct(this: any) {
           initialData={initialData}
           rowsPerPage={8}
           onRowAction={_handleSelect}
+          multiSelectTable={select ? 'multiple' : 'single'}
+          handleSelected={setListSelected}
         />
         <DefaultModal
           modalTitle={`Chi tiết câu hỏi ${id}`}
