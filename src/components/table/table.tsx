@@ -87,7 +87,13 @@ const TableComponent: React.FC<TableType> = ({
   return (
     <Table
       aria-label={`Table about ${labelTable}`}
-      onSelectionChange={(value: any) => handleSelected(Array.from(value))}
+      onSelectionChange={
+        handleSelected
+          ? (value: any) => {
+              handleSelected(value === 'all' ? initialData : Array.from(value))
+            }
+          : () => {}
+      }
       bottomContent={
         <div className="flex w-full justify-center">
           <Pagination

@@ -276,7 +276,7 @@ function CodeOfConduct(this: any) {
   return (
     <>
       <div className="flex justify-between mt-[20px]">
-        <div className={listSelected.length > 0 ? 'hidden' : 'block'}>
+        <div className={listSelected?.length > 0 ? 'hidden' : 'block'}>
           <Button
             onClick={() => setSelect(!select)}
             // 'text-base-drak-gray bg-transparent'3748a0
