@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { SearchIcon } from '@/components/icon'
+import { ExportIcon, SearchIcon } from '@/components/icon'
 import TableComponent from '@/components/table/table'
 import DefaultModal from '@/components/modal'
 
@@ -20,6 +20,7 @@ import {
 } from 'iconsax-react'
 import { ToastComponent } from '@/components/Toast'
 import { useRouter } from 'next/router'
+import SelectButton from '@/components/SelectButton'
 
 function CodeOfConduct(this: any) {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
@@ -54,7 +55,6 @@ function CodeOfConduct(this: any) {
   const [errorTestIntruction, setErrorTestIntruction] = useState(false)
   const [errorQuestion, setErrorQuestion] = useState(false)
 
-  const router = useRouter()
   const columns = [
     { id: 'idTest', name: 'ID bài test', sortable: true },
     { id: 'title', name: 'Tiêu đề', sortable: true },
@@ -276,33 +276,11 @@ function CodeOfConduct(this: any) {
   return (
     <>
       <div className="flex justify-between mt-[20px]">
-        <div className={listSelected?.length > 0 ? 'hidden' : 'block'}>
-          <Button
-            onClick={() => setSelect(!select)}
-            // 'text-base-drak-gray bg-transparent'3748a0
-            size="md"
-            style={{
-              background: select ? '#babef4' : 'transparent',
-            }}
-            className={`rounded-[16px] px-[42px] ${
-              select
-                ? 'text-[#3748a0] '
-                : 'text-base-drak-gray border-[2px] border-base-gray-2'
-            }`}
-          >
-            Chọn
-          </Button>
-        </div>
-        <div className={listSelected.length > 0 ? 'block' : 'hidden'}>
-          <Button
-            onClick={() => {}}
-            size="md"
-            className="border-[2px] bg-transparent font-semibold block"
-            style={{ color: '#fe7434', borderColor: '#ff4343' }}
-          >
-            Xóa<span className="">({listSelected?.length})</span>
-          </Button>
-        </div>
+        <SelectButton
+          listSelected={listSelected}
+          select={select}
+          setSelect={setSelect}
+        />
         <div className="flex gap-4">
           <div className="">
             <Input
@@ -316,17 +294,10 @@ function CodeOfConduct(this: any) {
             />
           </div>
           <FilterCompoent />
-          <Button
-            size="md"
-            onClick={() => router.push('/test-management/form')}
-            className="rounded-[16px] px-4 13inch:px-[19px] text-white bg-primary-blue text-xs 13inch:text-sm flex items-center gap-2"
-          >
-            <Add size="24" color="#fff" />
-            Tạo mới
-          </Button>
+          <CreateNew />
         </div>
       </div>
-      <div style={{ marginTop: 16 }} className="">
+      <div className="mt-4">
         <TableComponent
           columns={columns}
           initialData={initialData}
@@ -932,6 +903,60 @@ const FilterCompoent = () => {
           >
             Bỏ chọn(8)
           </Button>
+        }
+      />
+    </>
+  )
+}
+
+const CreateNew = () => {
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
+  const router = useRouter()
+
+  return (
+    <>
+      <Button
+        onPress={onOpen}
+        size="md"
+        className="rounded-[16px] px-4 13inch:px-[19px] text-white bg-primary-blue text-xs 13inch:text-sm flex items-center gap-2"
+      >
+        <Add size="24" color="#fff" />
+        Tạo mới
+      </Button>
+      <DefaultModal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        modalTitle={'Tạo mới câu hỏi'}
+        propsModal={{
+          size: '3xl',
+        }}
+        modalBody={
+          <div className="pb-6">
+            <p className="text-base-black-1 text-sm py-6">
+              Vui lòng chọn 1 trong 2 cách bên dưới để tạo câu hỏi!
+            </p>
+            <div className="flex gap-6">
+              <div className="flex relative flex-col h-[200px] text-[#3748A0]  items-center justify-center w-full border-[1px] border-base-gray-2 rounded-2xl">
+                <input
+                  type="file"
+                  className="w-full h-[200px] opacity-0 absolute top-0 left-0 ring-0 bottom-0 cursor-pointer"
+                />
+                <span className="">
+                  <ExportIcon />
+                </span>
+                <p className="text-[#3748A0]">Tải lên file Excel</p>
+              </div>
+              <div
+                onClick={() => router.push('/test-management/form')}
+                className="flex flex-col h-[200px] text-[#3748A0] cursor-pointer items-center justify-center w-full border-[1px] border-base-gray-2 rounded-2xl"
+              >
+                <span className="">
+                  <Add size={24} color="#3748A0" />
+                </span>
+                <p className="text-[#3748A0]">Tạo thủ công từng câu</p>
+              </div>
+            </div>
+          </div>
         }
       />
     </>

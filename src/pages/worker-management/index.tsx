@@ -14,6 +14,7 @@ import ModalComponent from '@/components/modal/index'
 import { Button, Input, useDisclosure } from '@nextui-org/react'
 import { Filter, Filter as FilterIcon, Man, Woman } from 'iconsax-react'
 import { ToastComponent } from '@/components/Toast'
+import SelectButton from '@/components/SelectButton'
 
 const Page: NextPageWithLayout = () => {
   const dispatch = useDispatch()
@@ -123,7 +124,9 @@ const Page: NextPageWithLayout = () => {
     }
     return filteredUsers
   }, [filterValue])
+  const [select, setSelect] = useState<boolean>(false)
 
+  const [listSelected, setListSelected] = useState([])
   return (
     <div className="h-[calc(100vh-110px)]">
       <div className="flex mb-4 gap-6">
@@ -150,14 +153,11 @@ const Page: NextPageWithLayout = () => {
         </div>
       </div>
       <div className="flex justify-between">
-        <div className="">
-          <Button
-            size="md"
-            className="rounded-[16px] px-[42px] text-base-drak-gray bg-transparent border-[2px] border-base-gray-2"
-          >
-            Chọn
-          </Button>
-        </div>
+        <SelectButton
+          listSelected={listSelected}
+          select={select}
+          setSelect={setSelect}
+        />
         <div className="flex gap-4">
           <div className="">
             <SearchInput
@@ -167,16 +167,16 @@ const Page: NextPageWithLayout = () => {
             />
           </div>
           <FilterModal />
-          
         </div>
       </div>
       <div className="mt-8">
         <TableComponent
           columns={columns}
           initialData={filteredItems}
-          multiSelectTable="multiple"
           renderCell={renderCell}
           onRowAction={id => router.push(`worker-management/${id}`)}
+          multiSelectTable={select ? 'multiple' : 'single'}
+          handleSelected={setListSelected}
         />
       </div>
     </div>

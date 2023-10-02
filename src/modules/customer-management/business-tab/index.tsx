@@ -10,6 +10,7 @@ import DefaultModal from '@/components/modal'
 import SearchInput from '@/components/input/search'
 import { ToastComponent } from '@/components/Toast'
 import { useState } from 'react'
+import SelectButton from '@/components/SelectButton'
 
 const BussinessCustomer = () => {
   const router = useRouter()
@@ -86,19 +87,18 @@ const BussinessCustomer = () => {
       scale: 'Lớn',
     },
   ]
+  const [select, setSelect] = useState<boolean>(false)
 
+  const [listSelected, setListSelected] = useState([])
   return (
     <div className="">
       <TotalEmployee title={'Tổng số lượng doanh nghiệp'} quality={500} />
       <div className="flex justify-between mt-8">
-        <div className="">
-          <Button
-            size="md"
-            className="rounded-[16px] px-[42px] text-base-drak-gray bg-transparent border-[2px] border-base-gray-2"
-          >
-            Chọn
-          </Button>
-        </div>
+        <SelectButton
+          listSelected={listSelected}
+          select={select}
+          setSelect={setSelect}
+        />
         <div className="flex gap-4">
           <div className="">
             <Input
@@ -127,7 +127,8 @@ const BussinessCustomer = () => {
           columns={columns}
           initialData={initialData}
           rowsPerPage={8}
-          multiSelectTable="multiple"
+          multiSelectTable={select ? 'multiple' : 'single'}
+          handleSelected={setListSelected}
           onRowAction={id =>
             router.push(`customer-management/bussinessId=${id}`)
           }

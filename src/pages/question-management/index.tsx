@@ -32,6 +32,7 @@ import {
 } from 'iconsax-react'
 import Image from 'next/image'
 import { ToastComponent } from '@/components/Toast'
+import SelectButton from '@/components/SelectButton'
 
 const Page: NextPageWithLayout = () => {
   const dispatch = useDispatch()
@@ -646,16 +647,17 @@ const QuestionTab: React.FC = () => {
     }
   }
   const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure()
+  const [select, setSelect] = useState<boolean>(false)
 
+  const [listSelected, setListSelected] = useState([])
   return (
     <div>
       <div className="flex justify-between mt-1 mb-2">
-        <Button
-          size="md"
-          className="rounded-[16px] px-[42px] text-base-drak-gray bg-transparent border-[2px] border-base-gray-2"
-        >
-          Chọn
-        </Button>
+        <SelectButton
+          listSelected={listSelected}
+          select={select}
+          setSelect={setSelect}
+        />
         <div className="flex gap-4">
           <Input
             className="bg-transparent border-[1px] border-base-gray-2 rounded-2xl overflow-hidden"
@@ -688,6 +690,8 @@ const QuestionTab: React.FC = () => {
         rowsPerPage={10}
         renderCell={renderCell}
         onRowAction={onOpen}
+        multiSelectTable={select ? 'multiple' : 'single'}
+        handleSelected={setListSelected}
       />
       <DefaultModal
         modalTitle="Chi tiết câu hỏi"

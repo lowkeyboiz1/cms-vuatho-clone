@@ -1,6 +1,6 @@
 import { Layout } from '@/components'
 import { NextPageWithLayout } from '../_app'
-import { ReactElement, useEffect } from 'react'
+import { ReactElement, useEffect, useState } from 'react'
 import { Button, Input } from '@nextui-org/react'
 import { SearchIcon } from '@/components/icon'
 import { Add, Filter } from 'iconsax-react'
@@ -10,6 +10,7 @@ import { useDispatch } from 'react-redux'
 import { breadcrumbAction } from '@/store/slices/loggedSlice/breadcrumbSlice'
 import Head from 'next/head'
 import SummaryForm from '@/components/form/summary'
+import SelectButton from '@/components/SelectButton'
 
 const Page: NextPageWithLayout = () => {
   const dispatch = useDispatch()
@@ -95,20 +96,19 @@ const Page: NextPageWithLayout = () => {
       scale: 'Lớn',
     },
   ]
+  const [select, setSelect] = useState<boolean>(false)
 
+  const [listSelected, setListSelected] = useState([])
   return (
     <>
       <div className="">
-        <SummaryForm title='Tổng số lượng nhà cung cấp' quality={50} />
+        <SummaryForm title="Tổng số lượng nhà cung cấp" quality={50} />
         <div className="flex justify-between mt-8">
-          <div className="">
-            <Button
-              size="md"
-              className="rounded-[16px] px-[42px] text-base-drak-gray bg-transparent border-[2px] border-base-gray-2"
-            >
-              Chọn
-            </Button>
-          </div>
+          <SelectButton
+            listSelected={listSelected}
+            select={select}
+            setSelect={setSelect}
+          />
           <div className="flex gap-4">
             <div className="">
               <Input
@@ -142,7 +142,8 @@ const Page: NextPageWithLayout = () => {
             columns={columns}
             initialData={initialData}
             rowsPerPage={8}
-            multiSelectTable='multiple'
+            multiSelectTable={select ? 'multiple' : 'single'}
+            handleSelected={setListSelected}
           />
         </div>
       </div>

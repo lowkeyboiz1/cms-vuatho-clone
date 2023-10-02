@@ -10,6 +10,7 @@ import DefaultModal from '@/components/modal'
 import { useState } from 'react'
 import SearchInput from '@/components/input/search'
 import { ToastComponent } from '@/components/Toast'
+import SelectButton from '@/components/SelectButton'
 
 const PersonalCustomer = () => {
   const router = useRouter()
@@ -86,18 +87,18 @@ const PersonalCustomer = () => {
       ranking: 'Đồng',
     },
   ]
+  const [select, setSelect] = useState<boolean>(false)
+
+  const [listSelected, setListSelected] = useState([])
   return (
     <div className="">
       <SummaryForm title="Tổng số lượng khách" quality={500.0} />
       <div className="flex justify-between mt-8">
-        <div className="">
-          <Button
-            size="md"
-            className="rounded-[16px] px-[42px] text-base-drak-gray bg-transparent border-[2px] border-base-gray-2"
-          >
-            Chọn
-          </Button>
-        </div>
+        <SelectButton
+          listSelected={listSelected}
+          select={select}
+          setSelect={setSelect}
+        />
         <div className="flex gap-4">
           <div className="">
             <Input
@@ -125,7 +126,8 @@ const PersonalCustomer = () => {
           columns={columns}
           initialData={initialData}
           rowsPerPage={8}
-          multiSelectTable="multiple"
+          multiSelectTable={select ? 'multiple' : 'single'}
+          handleSelected={setListSelected}
           onRowAction={id =>
             router.push(`customer-management/customerId=${id}`)
           }
@@ -334,7 +336,9 @@ const InputTest = ({
         </div>
       ) : (
         <div className="input-control flex flex-col gap-1">
-          <label className="text-base font-semibold">{title} <span className='text-red-700'>*</span></label>
+          <label className="text-base font-semibold">
+            {title} <span className="text-red-700">*</span>
+          </label>
           <Textarea
             variant={'bordered'}
             labelPlacement="outside"

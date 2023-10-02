@@ -22,6 +22,7 @@ import {
   SearchNormal1,
 } from 'iconsax-react'
 import { ToastComponent } from '@/components/Toast'
+import SelectButton from '@/components/SelectButton'
 const Page: NextPageWithLayout = () => {
   const router = useRouter()
   const dispatch = useDispatch()
@@ -115,17 +116,17 @@ const Page: NextPageWithLayout = () => {
       totalJob: '32 nghề',
     },
   ]
+  const [select, setSelect] = useState<boolean>(false)
+
+  const [listSelected, setListSelected] = useState([])
   return (
     <>
       <div className="flex justify-between mt-1 mb-2">
-        <div className="">
-          <Button
-            size="md"
-            className="rounded-[16px] px-[42px] text-base-drak-gray bg-transparent border-[2px] border-base-gray-2"
-          >
-            Chọn
-          </Button>
-        </div>
+        <SelectButton
+          listSelected={listSelected}
+          select={select}
+          setSelect={setSelect}
+        />
         <div className="flex gap-4">
           <div className="">
             <Input
@@ -153,7 +154,8 @@ const Page: NextPageWithLayout = () => {
         initialData={initialData}
         rowsPerPage={10}
         onRowAction={id => router.push(`job-management/${id}`)}
-        // multiSelectTable="multiple"
+        multiSelectTable={select ? 'multiple' : 'single'}
+        handleSelected={setListSelected}
       />
     </>
   )
