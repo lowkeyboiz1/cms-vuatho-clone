@@ -21,7 +21,7 @@ import {
   ModalBody,
   ModalFooter,
 } from '@nextui-org/react'
-import { SearchIcon } from '@/components/icon'
+import { ExportIcon, SearchIcon } from '@/components/icon'
 import {
   Add,
   Add as AddIcon,
@@ -33,8 +33,11 @@ import {
 import Image from 'next/image'
 import { ToastComponent } from '@/components/Toast'
 import SelectButton from '@/components/SelectButton'
+import instance from '@/services/axiosConfig'
 
 const Page: NextPageWithLayout = () => {
+  const [listQuestionFromApi, setListQuestionFromApi] = useState([])
+
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -43,11 +46,25 @@ const Page: NextPageWithLayout = () => {
     )
   }, [])
 
+  const callApiListQuestion = async () => {
+    const respone = await instance.get('/input-testing/questions', {
+      params: {
+        page: 1,
+        limit: 10,
+      },
+    })
+    setListQuestionFromApi(respone.data)
+  }
+
+  useEffect(() => {
+    callApiListQuestion()
+  }, [])
+
   const tabs = [
     {
       id: 'question',
       label: 'Quy tắc ứng xử',
-      content: <QuestionTab />,
+      content: <QuestionTab listQuestionFromApi={listQuestionFromApi} />,
     },
     {
       id: 'profession',
@@ -87,18 +104,14 @@ const Page: NextPageWithLayout = () => {
   )
 }
 
-const QuestionInfo = ({ onClose }: { onClose: any }) => {
+const QuestionInfo = ({
+  onClose,
+  detailQuestion,
+}: {
+  onClose: any
+  detailQuestion: any
+}) => {
   const inputUpload: RefObject<HTMLInputElement> = useRef(null)
-
-  const [listFile, sListFile] = useState<
-    { id: string; file: string; thumb: File | null }[]
-  >([])
-  const [answerList, sAnswerList] = useState<
-    { id: any; content: string; checked: boolean }[]
-  >([
-    { id: 'answer-1', content: '', checked: false },
-    { id: 'answer-2', content: '', checked: false },
-  ])
 
   const [errorQuestionContent, sErrorQuestionContent] = useState<boolean>(false)
   const [errorQuestionTime, sErrorQuestionTime] = useState<boolean>(false)
@@ -106,8 +119,8 @@ const QuestionInfo = ({ onClose }: { onClose: any }) => {
   const [errorAnswer, sErrorAnswer] = useState<boolean>(false)
 
   const initData = {
-    questionContent: '123',
-    listFile: [
+    question: '123',
+    attachments: [
       {
         id: 'fa948052-5182-4405-ac85-60f4c7156370',
         file: '/images/Rectangle 3538.png',
@@ -117,69 +130,67 @@ const QuestionInfo = ({ onClose }: { onClose: any }) => {
         file: 'https://i.pinimg.com/474x/4e/00/d6/4e00d6fefc62f1f26ada55a1f4f100c1.jpg',
       },
     ],
-    answerList: [
+    answers: [
       {
         id: 'answer-1',
         content: '213213',
-        checked: true,
+        is_correct: true,
       },
       {
         id: 'answer-2',
         content: '213',
-        checked: false,
+        is_correct: false,
       },
     ],
-    questionTime: 123,
-    questionPoint: 123,
+    time: 123,
+    point: 123,
   }
 
-  const [listData, setListData] = useState<any>(initData)
+  const [listData, setListData] = useState<any>(detailQuestion)
 
-  const router = useRouter()
+  console.log(listData.time)
+
   const checkConditionAnswer =
-    listData.answerList.filter((answer: any) => answer.content !== '').length >=
+    listData.answers.filter((answer: any) => answer.content !== '').length >=
       2 &&
-    listData.answerList.filter((answer: any) => answer.checked).length >= 1
-
+    listData.answers.filter((answer: any) => answer.is_correct).length >= 1
   const _HandleDeleteFile = (type: string, id?: any) => {
     if (type == 'item') {
-      const listFile = listData?.listFile.filter(
+      const attachments = listData?.attachments.filter(
         (image: any) => image.id !== id,
       )
       setListData({
         ...listData,
-        listFile,
+        attachments,
       })
     } else if (type == 'all') {
       setListData({
         ...listData,
-        listFile: [],
+        attachments: [],
       })
     }
   }
   const _HandleAddAnswer = () => {
-    const newAnswer = { id: Date.now(), content: '', checked: false }
+    const newAnswer = { id: Date.now(), content: '', is_correct: false }
     setListData({
       ...listData,
-      answerList: [...listData.answerList, newAnswer],
+      answers: [...listData.answers, newAnswer],
     })
   }
   const BtnDeleteAnswer = (id: any) => {
     const { onOpen, isOpen, onClose, onOpenChange } = useDisclosure()
 
     const _HandleCheckDelete = (id: any) => {
-      const itemToDelete = listData?.answerList.find((e: any) => e.id === id.id)
+      const itemToDelete = listData?.answers.find((e: any) => e.id === id.id)
 
       if (itemToDelete) {
-        const { content, checked } = itemToDelete
+        const { content, is_correct } = itemToDelete
 
-        if (content !== '' || checked) {
+        if (content !== '' || is_correct) {
           onOpen()
         } else {
-          const answerList = listData?.answerList.filter(
-            (e: any) => e.id !== id.id,
-          )
-          setListData({ ...listData, answerList })
+          const answers = listData?.answers.filter((e: any) => e.id !== id.id)
+          setListData({ ...listData, answers })
         }
       }
     }
@@ -187,7 +198,7 @@ const QuestionInfo = ({ onClose }: { onClose: any }) => {
       <>
         <Button
           onClick={_HandleCheckDelete.bind(this, id)}
-          isDisabled={listData?.answerList.length > 2 ? false : true}
+          isDisabled={listData?.answers.length > 2 ? false : true}
           className="text-red-500 bg-red-100 rounded-full ml-3"
           isIconOnly
           size="md"
@@ -218,34 +229,30 @@ const QuestionInfo = ({ onClose }: { onClose: any }) => {
     value?: any,
   ) => {
     if (type == 'delete') {
-      const answerList = listData?.answerList.filter((e: any) => e.id !== id.id)
+      const answers = listData?.answers.filter((e: any) => e.id !== id.id)
 
-      setListData({ ...listData, answerList })
+      setListData({ ...listData, answers })
     } else if (type == 'change') {
-      const answerList = listData?.answerList.map((e: any) => {
-        // console.log(e)
+      const answers = listData?.answers.map((e: any) => {
         if (e.id == id) {
           if (typeChange == 'content') {
             return { ...e, content: value.target.value }
           } else if (typeChange == 'answer') {
-            return { ...e, checked: !e.checked }
+            return { ...e, is_correct: !e.is_correct }
           }
         }
         return e
       })
-      setListData({ ...listData, answerList })
+      setListData({ ...listData, answers })
     }
   }
-  useEffect(() => {
-    console.log(listData.listFile)
-  }, [listData.listFile])
 
   const _HandleChangeValue = (type: any, value?: any) => {
     if (type === 'uploadFile') {
       const newFiles = Array.from(value.target.files) as File[]
 
       if (newFiles.length > 0) {
-        const listFile = newFiles.map(file => ({
+        const attachments = newFiles.map(file => ({
           id: uuidv4(),
           file: URL.createObjectURL(file),
           // thumb: file,
@@ -253,7 +260,7 @@ const QuestionInfo = ({ onClose }: { onClose: any }) => {
 
         setListData((prevData: any) => ({
           ...prevData,
-          listFile: [...prevData.listFile, ...listFile],
+          attachments: [...prevData.attachments, ...attachments],
         }))
       }
 
@@ -267,22 +274,20 @@ const QuestionInfo = ({ onClose }: { onClose: any }) => {
 
   const _HandleSubmit = () => {
     if (
-      listData.questionContent == '' ||
-      listData.questionTime == 0 ||
-      listData.questionPoint == 0 ||
+      listData.question == '' ||
+      listData.time == 0 ||
+      listData.point == 0 ||
       !checkConditionAnswer
     ) {
-      console.log('error')
-      listData.questionContent == '' && sErrorQuestionContent(true)
-      listData.questionTime == 0 && sErrorQuestionTime(true)
-      listData.questionPoint == 0 && sErrorQuestionPoint(true)
+      listData.question == '' && sErrorQuestionContent(true)
+      listData.time == 0 && sErrorQuestionTime(true)
+      listData.point == 0 && sErrorQuestionPoint(true)
       !checkConditionAnswer && sErrorAnswer(true)
       ToastComponent({
         message: 'Vui lòng nhập đầy đủ thông tin',
         type: 'error',
       })
     } else {
-      console.log('success')
       sErrorQuestionContent(false)
       sErrorQuestionTime(false)
       sErrorQuestionPoint(false)
@@ -309,19 +314,19 @@ const QuestionInfo = ({ onClose }: { onClose: any }) => {
                 </label>
                 <Textarea
                   minRows={1}
-                  value={listData.questionContent}
+                  value={listData.question}
                   size="md"
-                  onChange={_HandleChangeValue.bind(this, 'questionContent')}
+                  onChange={_HandleChangeValue.bind(this, 'question')}
                   placeholder="Nhập câu hỏi..."
                   validationState={
-                    errorQuestionContent && listData.questionContent == ''
+                    errorQuestionContent && listData.question == ''
                       ? 'invalid'
                       : 'valid'
                   }
                   errorMessage={
                     <span
                       className={`${
-                        errorQuestionContent && listData.questionContent == ''
+                        errorQuestionContent && listData.question == ''
                           ? 'visible'
                           : 'invisible'
                       } transition`}
@@ -363,7 +368,7 @@ const QuestionInfo = ({ onClose }: { onClose: any }) => {
                       <DocumentUploadIcon variant="Bulk" />
                       <span>Tải lên</span>
                     </label>
-                    {listData?.listFile.length > 0 && (
+                    {listData?.attachments.length > 0 && (
                       <Button
                         onClick={_HandleDeleteFile.bind(this, 'all')}
                         variant="flat"
@@ -377,7 +382,7 @@ const QuestionInfo = ({ onClose }: { onClose: any }) => {
                   </div>
                 </div>
                 <div className="flex items-center gap-4 overflow-x-auto scroll-smooth pb-1">
-                  {listData?.listFile.map((e: any) => (
+                  {listData?.attachments.map((e: any) => (
                     <div
                       key={e.id}
                       className="relative min-w-fit h-fit group overflow-hidden rounded-md"
@@ -420,11 +425,11 @@ const QuestionInfo = ({ onClose }: { onClose: any }) => {
                 </Button>
               </div>
               <div className="space-y-1.5">
-                {listData?.answerList.map((e: any, i: any) => (
+                {listData?.answers.map((e: any, i: any) => (
                   <div key={e.id} className="flex items-center">
                     <Checkbox
                       value={e.id}
-                      isSelected={e.checked}
+                      isSelected={e.is_correct}
                       onValueChange={_HandleActionAnswer.bind(
                         this,
                         'change',
@@ -437,7 +442,7 @@ const QuestionInfo = ({ onClose }: { onClose: any }) => {
                     >
                       <span
                         className={`${
-                          e.checked
+                          e.is_correct
                             ? 'bg-primary-blue text-white'
                             : 'bg-base-gray'
                         } transition-background h-9 w-9 rounded-full font-medium text-xs 13inch:text-sm flex flex-col items-center justify-center ml-10`}
@@ -446,12 +451,12 @@ const QuestionInfo = ({ onClose }: { onClose: any }) => {
                       </span>
                     </Checkbox>
                     <Textarea
-                      value={e.content}
+                      value={e.answer}
                       onChange={_HandleActionAnswer.bind(
                         this,
                         'change',
                         e.id,
-                        'content',
+                        'answer',
                       )}
                       minRows={1}
                       placeholder="Nhập câu trả lời ..."
@@ -481,24 +486,18 @@ const QuestionInfo = ({ onClose }: { onClose: any }) => {
                 Thời gian cho câu hỏi <span className="text-red-500">*</span>
               </label>
               <Input
-                type="number"
-                value={
-                  listData.questionTime !== undefined
-                    ? listData.questionTime.toString()
-                    : undefined
-                }
-                onChange={_HandleChangeValue.bind(this, 'questionTime')}
+                type="text"
+                defaultValue={'khang'}
+                onChange={_HandleChangeValue.bind(this, 'time')}
                 variant="bordered"
                 placeholder="Nhập số giây"
                 validationState={
-                  errorQuestionTime && listData.questionTime == 0
-                    ? 'invalid'
-                    : 'valid'
+                  errorQuestionTime && listData.time == 0 ? 'invalid' : 'valid'
                 }
                 errorMessage={
                   <span
                     className={`${
-                      errorQuestionTime && listData.questionTime == 0
+                      errorQuestionTime && listData.time == 0
                         ? 'visible'
                         : 'invisible'
                     } transition`}
@@ -525,22 +524,22 @@ const QuestionInfo = ({ onClose }: { onClose: any }) => {
               <Input
                 type="number"
                 value={
-                  listData?.questionPoint !== undefined
-                    ? listData?.questionPoint.toString()
+                  listData?.point !== undefined
+                    ? listData?.point.toString()
                     : undefined
                 }
-                onChange={_HandleChangeValue.bind(this, 'questionPoint')}
+                onChange={_HandleChangeValue.bind(this, 'point')}
                 variant="bordered"
                 placeholder="Nhập số điểm"
                 validationState={
-                  errorQuestionPoint && listData?.questionPoint == 0
+                  errorQuestionPoint && listData?.point == 0
                     ? 'invalid'
                     : 'valid'
                 }
                 errorMessage={
                   <span
                     className={`${
-                      errorQuestionPoint && listData?.questionPoint == 0
+                      errorQuestionPoint && listData?.point == 0
                         ? 'visible'
                         : 'invisible'
                     } transition`}
@@ -584,7 +583,7 @@ const QuestionInfo = ({ onClose }: { onClose: any }) => {
   )
 }
 
-const QuestionTab: React.FC = () => {
+const QuestionTab = ({ listQuestionFromApi }: { listQuestionFromApi: any }) => {
   const columns = [
     { id: 'question', name: 'Câu hỏi', sortable: true },
     { id: 'career', name: 'Nghề nghiệp', sortable: true },
@@ -595,33 +594,8 @@ const QuestionTab: React.FC = () => {
     { id: 'user', name: 'User', sortable: true },
   ]
 
-  const initialData = [
-    {
-      id: 4,
-      question: 'Công việc của một nhà quản lý dự án là gì? asd asd asd asd',
-      career: 'Điện lạnh',
-      point: 1,
-      time: '12:00',
-      type: '4 câu trả lời, 1 đáp án đúng',
-      action: 'Tạo mới',
-      timeAction: '11:20 20/10/2023',
-      user: 'asdasd',
-    },
-    {
-      id: 5,
-      question: 'Công việc của một nhà quản lý dự án là gì? asd asd asd asd',
-      career: 'Điện lạnh 123',
-      point: 1,
-      time: '12:00',
-      type: '4 câu trả lời, 1 đáp án đúng',
-      action: 'Tạo mới',
-      timeAction: '11:20 20/10/2023',
-      user: 'asdasd',
-    },
-  ]
-
   const renderCell = (
-    dataItem: (typeof initialData)[number],
+    dataItem: (typeof listQuestionFromApi)[number],
     columnKey: React.Key,
   ) => {
     const cellValue = dataItem[columnKey as keyof typeof dataItem]
@@ -639,17 +613,26 @@ const QuestionTab: React.FC = () => {
       case 'question':
         return <p className="w-60">{cellValue}</p>
       default:
-        return (
-          <div className="text-xs 13inch:text-sm relative -top-2">
-            {cellValue}
-          </div>
-        )
+        return <div className="text-xs 13inch:text-sm">{cellValue}</div>
     }
   }
+
   const { isOpen, onClose, onOpen, onOpenChange } = useDisclosure()
   const [select, setSelect] = useState<boolean>(false)
 
   const [listSelected, setListSelected] = useState([])
+
+  const [detailQuestion, setDetailQuestion] = useState({})
+
+  const handleCallApiDetailQuestion = async (id: number) => {
+    const respone = await instance.get(`/input-testing/questions/${id}`)
+    setDetailQuestion(respone.data)
+  }
+  const _HandleClickDetail = async (id: number) => {
+    await handleCallApiDetailQuestion(id)
+    onOpen()
+  }
+
   return (
     <div>
       <div className="flex justify-between mt-1 mb-2">
@@ -675,21 +658,22 @@ const QuestionTab: React.FC = () => {
           >
             Bộ lọc
           </Button>
-          <Link
+          {/* <Link
             href="/question-management/form"
             className="rounded-[16px] px-[19px] text-white bg-primary-blue text-xs 13inch:text-sm flex items-center gap-2 min-w-fit"
           >
             <Add size="20" color="#fff" />
             Tạo mới
-          </Link>
+          </Link> */}
+          <CreateNew />
         </div>
       </div>
       <TableComponent
         columns={columns}
-        initialData={initialData}
+        initialData={listQuestionFromApi}
         rowsPerPage={10}
         renderCell={renderCell}
-        onRowAction={onOpen}
+        onRowAction={_HandleClickDetail}
         multiSelectTable={select ? 'multiple' : 'single'}
         handleSelected={setListSelected}
       />
@@ -701,7 +685,9 @@ const QuestionTab: React.FC = () => {
         propsModal={{
           size: '3xl',
         }}
-        customBody={<QuestionInfo onClose={onClose} />}
+        customBody={
+          <QuestionInfo onClose={onClose} detailQuestion={detailQuestion} />
+        }
       />
     </div>
   )
@@ -717,5 +703,59 @@ Page.getLayout = function getLayout(page: ReactElement) {
       </Head>
       <>{page}</>
     </Layout>
+  )
+}
+
+const CreateNew = () => {
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
+  const router = useRouter()
+
+  return (
+    <>
+      <Button
+        onPress={onOpen}
+        size="md"
+        className="rounded-[16px] px-4 13inch:px-[19px] text-white bg-primary-blue text-xs 13inch:text-sm flex items-center gap-2"
+      >
+        <Add size="24" color="#fff" />
+        Tạo mới
+      </Button>
+      <DefaultModal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        modalTitle={'Tạo mới câu hỏi'}
+        propsModal={{
+          size: '3xl',
+        }}
+        modalBody={
+          <div className="pb-6">
+            <p className="text-base-black-1 text-sm py-6">
+              Vui lòng chọn 1 trong 2 cách bên dưới để tạo câu hỏi!
+            </p>
+            <div className="flex gap-6">
+              <div className="flex relative flex-col h-[200px] text-[#3748A0]  items-center justify-center w-full border-[1px] border-base-gray-2 rounded-2xl">
+                <input
+                  type="file"
+                  className="w-full h-[200px] opacity-0 absolute top-0 left-0 ring-0 bottom-0 cursor-pointer"
+                />
+                <span className="">
+                  <ExportIcon />
+                </span>
+                <p className="text-[#3748A0]">Tải lên file Excel</p>
+              </div>
+              <div
+                onClick={() => router.push('/question-management/form')}
+                className="flex flex-col h-[200px] text-[#3748A0] cursor-pointer items-center justify-center w-full border-[1px] border-base-gray-2 rounded-2xl"
+              >
+                <span className="">
+                  <Add size={24} color="#3748A0" />
+                </span>
+                <p className="text-[#3748A0]">Tạo thủ công từng câu</p>
+              </div>
+            </div>
+          </div>
+        }
+      />
+    </>
   )
 }

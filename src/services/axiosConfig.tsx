@@ -20,7 +20,9 @@ const instance = axios.create({
 const urlExceptAuthorization = ['Authenticate']
 
 const authorization = async () => {
-  const token = localStorage.getItem('access_token')
+  // const token = localStorage.getItem('access_token')
+  const token =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJodXluZ3V5ZW5AZ21haWwuY29tIiwicGVybWlzc2lvbnMiOm51bGwsImZ1bGxfbmFtZSI6bnVsbCwicGhvbmUiOm51bGwsImlzX2FjdGl2ZSI6MSwiaWF0IjoxNjk1MzU4ODc5fQ.08D9M1nol6HVypQOS4BT1NujyZKZNxODbaWPtCI-sNk'
   if (token) {
     return { Authorization: 'Bearer ' + token }
   } else {
@@ -71,7 +73,7 @@ instance.interceptors.response.use(
       )
     }
 
-    return response
+    return response.data
   },
   error => {
     if (process.env.NODE_ENV !== 'production') {
