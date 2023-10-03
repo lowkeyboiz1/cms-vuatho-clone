@@ -253,7 +253,7 @@ function CodeOfConduct(this: any) {
       // onClose()
     }
   }
-
+// log
   const handleSubmit = () => {
     handleCreate()
   }
@@ -271,6 +271,7 @@ function CodeOfConduct(this: any) {
 
   const [listSelected, setListSelected] = useState([])
   const router = useRouter()
+  //lo
   return (
     <>
       <div className="flex justify-between mt-[20px]">
