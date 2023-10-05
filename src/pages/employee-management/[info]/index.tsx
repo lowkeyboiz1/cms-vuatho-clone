@@ -24,9 +24,9 @@ const Page: NextPageWithLayout = () => {
   useEffect(() => {
     dispatch(
       breadcrumbAction.updateBreadcrumb([
-        'Trang chủ',
-        'Quản lí nhân viên Vua Thợ',
-        'Chi tiết nhân viên',
+        {title: 'Trang chủ', url: '/'}, 
+        {title: 'Quản lí nhân viên Vua Thợ', url: "/employee-management"},
+        {title: 'Chi tiết nhân viên'},
       ]),
     )
   }, [])
@@ -73,7 +73,7 @@ const Page: NextPageWithLayout = () => {
     },
   ]
   return (
-    <div className="flex gap-4 items-start p-6 bg-white rounded-2xl h-screen">
+    <div className="flex gap-4 items-start p-6 bg-white rounded-2xl h-fit">
       <Avatar
         src="/images/Rectangle 3538.png"
         className="h-[80px] 13inch:h-[120px] min-w-[80px] 13inch:min-w-[120px]"

@@ -1,62 +1,46 @@
-function Job() {
+import React from 'react'
+
+const JobTab = () => {
+  const dataJob = [
+    {
+      title: 'Sữa chữa điện nước',
+      area: 'Quận 2, TPHCM',
+      time: '21/02/2023'
+    },{
+      title: 'Sữa chữa cống nước',
+      area: 'Quận 9, TPHCM',
+      time: '29/02/2023'
+    },{
+      title: 'Sữa chữa máy lạnh',
+      area: 'Quận 2, TPHCM',
+      time: '31/05/2023'
+    },
+  ]
   return (
-    <div className="flex flex-col gap-4">
-      <div className="bg-white mt-4 p-6 rounded-2xl text-base-black-1 font-semibold">
-        <div className="bg-white rounded-2xl text-base-black-1">
+    <div className="space-y-6">
+      {dataJob.map((e, i) => 
+        <div key={e.title} className='space-y-2'>
           <div className="flex items-center justify-between">
-            <div className="font-bold text-2xl ">Sữa chữa điện nước</div>
+            <h5 className="font-bold text-xl">{e.title}</h5>
             <div className="flex gap-2 items-center">
-              <div className="">Mã ngành nghề</div>
-              <div className="font-semibold text-base h-[40px] bg-base-gray px-4 rounded-lg flex items-center justify-center">
-                1
-              </div>
+              <span className="">Mã ngành nghề</span>
+              <span className="font-semibold text-base h-[40px] bg-base-gray px-4 rounded-lg flex items-center justify-center">{i + 1}</span>
             </div>
           </div>
-          <div className="flex gap-6">
-            <div className="flex flex-col gap-2 text-base w-full">
-              <div className=" font-semibold">Khu vực hoạt động</div>
-              <div className="font-normal rounded-lg bg-base-gray px-4 py-2">
-                Quận 2, TPHCM
-              </div>
+          <div className="grid grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className=" font-semibold">Khu vực hoạt động</label>
+              <p className="font-normal rounded-lg bg-base-gray px-4 py-2">{e.area}</p>
             </div>
-            <div className="flex flex-col gap-2 text-base w-full">
-              <div className=" font-semibold">Thời gian bắt đầu</div>
-              <div className="font-normal rounded-lg bg-base-gray px-4 py-2">
-                21/02/2023
-              </div>
+            <div className="space-y-2">
+              <label className=" font-semibold">Thời gian bắt đầu</label>
+              <p className="font-normal rounded-lg bg-base-gray px-4 py-2">{e.time}</p>
             </div>
           </div>
         </div>
-      </div>
-      <div className="bg-white mt-4 p-6 rounded-2xl text-base-black-1 font-semibold">
-        <div className="bg-white rounded-2xl text-base-black-1">
-          <div className="flex items-center justify-between">
-            <div className="font-bold text-2xl ">Sữa chữa điện nước</div>
-            <div className="flex gap-2 items-center">
-              <div className="">Mã ngành nghề</div>
-              <div className="font-semibold text-base h-[40px] bg-base-gray px-4 rounded-lg flex items-center justify-center">
-                2
-              </div>
-            </div>
-          </div>
-          <div className="flex gap-6">
-            <div className="flex flex-col gap-2 text-base w-full">
-              <div className=" font-semibold">Khu vực hoạt động</div>
-              <div className="font-normal rounded-lg bg-base-gray px-4 py-2">
-                Quận 2, TPHCM
-              </div>
-            </div>
-            <div className="flex flex-col gap-2 text-base w-full">
-              <div className=" font-semibold">Thời gian bắt đầu</div>
-              <div className="font-normal rounded-lg bg-base-gray px-4 py-2">
-                21/02/2023
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      )}
     </div>
   )
 }
 
-export default Job
+export default JobTab

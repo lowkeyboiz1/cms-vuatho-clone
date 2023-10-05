@@ -20,8 +20,22 @@ import {
 import { Add, CloseCircle, SearchNormal1 } from 'iconsax-react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { FormInput } from '@/components/forms'
+import { objectToFormData } from '@/utils'
+import services from '@/services'
 
 const Page: NextPageWithLayout = () => {
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(
+      breadcrumbAction.updateBreadcrumb([
+        {title: 'Trang chủ', url: '/'}, 
+        {title: 'Quản lí bài test', url: '/test-management'},
+        {title: 'Tạo mới'}
+      ]),
+    )
+  }, [])
+
   const [listQuestionAdd, setListQuestionAdd] = useState<any[]>([])
 
   const [job, setJob] = useState('')
@@ -49,33 +63,46 @@ const Page: NextPageWithLayout = () => {
     { id: 9, title: 'Web Designer' },
   ]
 
-  const handleCreate = () => {
-    if (
-      !job.length ||
-      !testTitle.length ||
-      !testDescription.length ||
-      !testIntruction.length ||
-      !listQuestionAdd.length
-    ) {
-      job.length === 0 && setErrorJob(true)
-      testTitle.length === 0 && setErrorTestTitle(true)
-      testDescription.length === 0 && setErrorTestDescription(true)
-      testIntruction.length === 0 && setErrorTestIntruction(true)
-      listQuestionAdd.length === 0 && setErrorQuestion(true)
-      ToastComponent({
-        message: 'Vui lòng nhập đầy đủ thông tin',
-        type: 'error',
-      })
-    } else {
-      console.log({
-        job,
-        testTitle,
-        testDescription,
-        testIntruction,
-        listQuestionAdd,
-      })
-      ToastComponent({ message: 'Tạo bài test thành công', type: 'success' })
-      router.push('/test-management')
+  const handleCreate = async () => {
+    try {
+      if (
+        !job.length ||
+        !testTitle.length ||
+        !testDescription.length ||
+        !testIntruction.length ||
+        !listQuestionAdd.length
+      ) {
+        job.length === 0 && setErrorJob(true)
+        testTitle.length === 0 && setErrorTestTitle(true)
+        testDescription.length === 0 && setErrorTestDescription(true)
+        testIntruction.length === 0 && setErrorTestIntruction(true)
+        listQuestionAdd.length === 0 && setErrorQuestion(true)
+        ToastComponent({
+          message: 'Vui lòng nhập đầy đủ thông tin',
+          type: 'error',
+        })
+      } else {
+        const payload = {
+          data: [
+            {
+              job,
+              testTitle,
+              testDescription,
+              testIntruction,
+              listQuestionAdd,
+            },
+          ],
+        }
+        const formData = objectToFormData(payload)
+        console.log(formData)
+        const result = await services.inputTesting.createQuestion(formData)
+        console.log(result)
+
+        ToastComponent({ message: 'Tạo bài test thành công', type: 'success' })
+        router.push('/test-management')
+      }
+    } catch (error) {
+      console.log(error)
     }
   }
 
@@ -110,9 +137,7 @@ const Page: NextPageWithLayout = () => {
 
   return (
     <>
-      <p className="text-2xl 13inch:text-3xl font-bold">
-        Tạo mới bài test quy tắc ứng xử
-      </p>
+      <h4 className="text-2xl 13inch:text-3xl font-bold">Tạo mới bài test quy tắc ứng xử</h4>
       <div className="form p-8 flex flex-col gap-2 bg-white rounded-2xl mt-4 mb-[100px]">
         <div className="w-full flex flex-col gap-4">
           <InputTest
@@ -175,9 +200,9 @@ const Page: NextPageWithLayout = () => {
           textArea
         />
         <div className="input-control flex flex-col gap-2">
-          <div className="text-sm 13inch:text-base font-semibold">
+          <label className="text-sm 13inch:text-base font-semibold">
             Chọn câu hỏi <span className="text-red-700">*</span>
-          </div>
+          </label>
           <div className="flex flex-col gap-2">
             {listQuestionAdd.length > 0 && (
               <div className="w-full">
@@ -209,7 +234,7 @@ const Page: NextPageWithLayout = () => {
           </div>
         </div>
       </div>
-      <footer className="fixed bottom-0 right-0 left-0 py-4 px-12 z-10 bg-white flex gap-6 items-center justify-end shadow-[0px_-4px_16px_0px_rgba(0,0,0,0.08)]">
+      <footer className="absolute bottom-0 right-0 left-0 py-4 px-12 z-10 bg-white flex gap-6 items-center justify-end shadow-[0px_-4px_16px_0px_rgba(0,0,0,0.08)]">
         <CancelComponent handleOpenModal={handleOpenModal} />
         <Button
           size="lg"
@@ -225,18 +250,6 @@ const Page: NextPageWithLayout = () => {
 }
 
 Page.getLayout = function getLayout(page: ReactElement) {
-  const dispatch = useDispatch()
-
-  useEffect(() => {
-    dispatch(
-      breadcrumbAction.updateBreadcrumb([
-        'Trang chủ',
-        'Quản lí bài test',
-        'Tạo mới',
-      ]),
-    )
-  }, [])
-
   return (
     <Layout>
       <Head>

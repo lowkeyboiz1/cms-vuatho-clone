@@ -1,10 +1,7 @@
 import { Layout } from '@/components'
 import { NextPageWithLayout } from '../_app'
 import { ReactElement, useEffect } from 'react'
-import { Button, Input, Tab, Tabs } from '@nextui-org/react'
-import { SearchIcon } from '@/components/icon'
-import { Add, Filter } from 'iconsax-react'
-import TableComponent from '@/components/table/table'
+import { Tab, Tabs } from '@nextui-org/react'
 import { useDispatch } from 'react-redux'
 import { breadcrumbAction } from '@/store/slices/loggedSlice/breadcrumbSlice'
 import Head from 'next/head'
@@ -15,7 +12,10 @@ const Page: NextPageWithLayout = () => {
 
   useEffect(() => {
     dispatch(
-      breadcrumbAction.updateBreadcrumb(['Trang chủ', 'Quản lí bài test']),
+      breadcrumbAction.updateBreadcrumb([
+        {title: 'Trang chủ', url: '/'}, 
+        {title: 'Quản lí bài test'}
+      ]),
     )
   }, [])
 

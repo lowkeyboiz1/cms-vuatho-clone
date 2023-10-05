@@ -11,7 +11,8 @@ const initialState: AuthState = {
   userInfo: {
     isAuth: false,
     isLoading: true,
-    name: '',
+    email: '',
+    full_name: ""
   },
 }
 

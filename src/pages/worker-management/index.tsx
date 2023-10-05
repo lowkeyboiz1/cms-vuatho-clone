@@ -10,18 +10,22 @@ import { SearchIcon, UserIcon } from '@/components/icon'
 import TableComponent from '@/components/table/table'
 import SearchInput from '@/components/input/search'
 import ModalComponent from '@/components/modal/index'
+import { ToastComponent } from '@/components/Toast'
+import SelectButton from '@/components/SelectButton'
+import Pagi from '@/components/pagination'
 
 import { Button, Input, useDisclosure } from '@nextui-org/react'
 import { Filter, Filter as FilterIcon, Man, Woman } from 'iconsax-react'
-import { ToastComponent } from '@/components/Toast'
-import SelectButton from '@/components/SelectButton'
 
 const Page: NextPageWithLayout = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
     dispatch(
-      breadcrumbAction.updateBreadcrumb(['Trang chủ', 'Quản lý User thợ']),
+      breadcrumbAction.updateBreadcrumb([
+        { title: 'Trang chủ', url: '/' },
+        { title: 'Quản lý User thợ' },
+      ]),
     )
   }, [])
 
@@ -127,8 +131,13 @@ const Page: NextPageWithLayout = () => {
   const [select, setSelect] = useState<boolean>(false)
 
   const [listSelected, setListSelected] = useState([])
+
+  //pagination
+  const [page, setPage] = useState<number>(1)
+  const rowsPerPage = 3
+
   return (
-    <div className="h-[calc(100vh-110px)]">
+    <>
       <div className="flex mb-4 gap-6">
         <div className="w-[300px] h-[100px] 13inch:w-[400px] 13inch:h-[110px] rounded-[16px] p-6 bg-primary-blue flex flex-col justify-center">
           <div className="flex items-center gap-4">
@@ -172,6 +181,9 @@ const Page: NextPageWithLayout = () => {
       <div className="mt-8">
         <TableComponent
           columns={columns}
+          page={page}
+          setPage={setPage}
+          rowsPerPage={rowsPerPage}
           initialData={filteredItems}
           renderCell={renderCell}
           onRowAction={id => router.push(`worker-management/${id}`)}
@@ -179,7 +191,10 @@ const Page: NextPageWithLayout = () => {
           handleSelected={setListSelected}
         />
       </div>
-    </div>
+      <div className='absolute bottom-5 w-full'>
+        <Pagi totalItem={8} page={page} onChange={page => setPage(page)} totalPage={Math.ceil(filteredItems.length / rowsPerPage)} />
+      </div>
+    </>
   )
 }
 Page.getLayout = function getLayout(page: ReactElement) {

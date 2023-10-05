@@ -6,10 +6,11 @@ import { useDispatch } from 'react-redux'
 import { NextPageWithLayout } from '../_app'
 import { breadcrumbAction } from '@/store/slices/loggedSlice/breadcrumbSlice'
 import { Layout } from '@/components'
-import { DepartmentIcon } from '@/components/icon'
 import TableComponent from '@/components/table/table'
-import SummaryForm from '@/components/form/summary'
 import DefaultModal from '@/components/modal'
+import { ToastComponent } from '@/components/Toast'
+import SelectButton from '@/components/SelectButton'
+import Pagi from '@/components/pagination'
 
 import { Button, Input, Tabs, Tab, useDisclosure } from '@nextui-org/react'
 import { SearchIcon } from '@/components/icon'
@@ -21,14 +22,16 @@ import {
   Filter as FilterIcon,
   SearchNormal1,
 } from 'iconsax-react'
-import { ToastComponent } from '@/components/Toast'
-import SelectButton from '@/components/SelectButton'
+
 const Page: NextPageWithLayout = () => {
   const router = useRouter()
   const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(breadcrumbAction.updateBreadcrumb(['Trang chủ', 'Quản lí ngành']))
+    dispatch(breadcrumbAction.updateBreadcrumb([
+      {title: 'Trang chủ', url: '/'}, 
+      {title: 'Quản lí ngành'}
+    ]))
   }, [])
   const columns = [
     { id: 'job', name: 'Ngành', sortable: true },
@@ -119,6 +122,11 @@ const Page: NextPageWithLayout = () => {
   const [select, setSelect] = useState<boolean>(false)
 
   const [listSelected, setListSelected] = useState([])
+
+  //pagination
+  const [page, setPage] = useState<number>(1)
+  const rowsPerPage = 3
+
   return (
     <>
       <div className="flex justify-between mt-1 mb-2">
@@ -151,12 +159,17 @@ const Page: NextPageWithLayout = () => {
       </div>
       <TableComponent
         columns={columns}
+        page={page}
+        setPage={setPage}
+        rowsPerPage={rowsPerPage}
         initialData={initialData}
-        rowsPerPage={10}
         onRowAction={id => router.push(`job-management/${id}`)}
         multiSelectTable={select ? 'multiple' : 'single'}
         handleSelected={setListSelected}
       />
+      <div className='absolute bottom-5 w-full'>
+        <Pagi totalItem={8} page={page} onChange={page => setPage(page)} totalPage={Math.ceil(initialData.length / rowsPerPage)} />
+      </div>
     </>
   )
 }

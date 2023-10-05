@@ -17,11 +17,9 @@ const Page: NextPageWithLayout = () => {
   useEffect(() => {
     dispatch(
       breadcrumbAction.updateBreadcrumb([
-        'Trang chủ',
-        'Quản lí user khách hàng',
-        router.query.info?.includes('bussinessId')
-          ? 'Chi tiết user khách hàng doanh nghiệp'
-          : 'Chi tiết user khách hàng cá nhân',
+        {title: 'Trang chủ', url: '/'}, 
+        {title: 'Quản lí user khách hàng', url: '/customer-management'},
+        {title: router.query.info?.includes('bussinessId') ? 'Chi tiết user khách hàng doanh nghiệp' : 'Chi tiết user khách hàng cá nhân'},
       ]),
     )
   }, [])

@@ -1,16 +1,17 @@
+import { useState } from 'react'
 import { useRouter } from 'next/router'
 
 import SummaryForm from '@/components/form/summary'
 import { SearchIcon } from '@/components/icon'
 import TableComponent from '@/components/table/table'
-
-import { Button, Input, Textarea, useDisclosure } from '@nextui-org/react'
-import { Add, Filter, Man, SearchNormal1, Woman } from 'iconsax-react'
 import DefaultModal from '@/components/modal'
-import { useState } from 'react'
 import SearchInput from '@/components/input/search'
 import { ToastComponent } from '@/components/Toast'
 import SelectButton from '@/components/SelectButton'
+import Pagi from '@/components/pagination'
+
+import { Button, Input, Textarea, useDisclosure } from '@nextui-org/react'
+import { Add, Filter, Man, SearchNormal1, Woman } from 'iconsax-react'
 
 const PersonalCustomer = () => {
   const router = useRouter()
@@ -90,8 +91,13 @@ const PersonalCustomer = () => {
   const [select, setSelect] = useState<boolean>(false)
 
   const [listSelected, setListSelected] = useState([])
+
+  //pagination
+  const [page, setPage] = useState<number>(1)
+  const rowsPerPage = 3
+
   return (
-    <div className="">
+    <>
       <SummaryForm title="Tổng số lượng khách" quality={500.0} />
       <div className="flex justify-between mt-8">
         <SelectButton
@@ -116,24 +122,25 @@ const PersonalCustomer = () => {
             size="md"
             startContent={<Add size="24" color="#fff" />}
             className="rounded-[16px] px-[19px] text-white bg-primary-blue text-sm"
-          >
-            Tạo mới
-          </Button>
+          >Tạo mới</Button>
         </div>
       </div>
       <div className="mt-8">
         <TableComponent
           columns={columns}
+          page={page}
+          setPage={setPage}
+          rowsPerPage={rowsPerPage}
           initialData={initialData}
-          rowsPerPage={8}
           multiSelectTable={select ? 'multiple' : 'single'}
           handleSelected={setListSelected}
-          onRowAction={id =>
-            router.push(`customer-management/customerId=${id}`)
-          }
+          onRowAction={id => router.push(`customer-management/customerId=${id}`)}
         />
       </div>
-    </div>
+      <div className='absolute bottom-5 w-full'>
+        <Pagi totalItem={8} page={page} onChange={page => setPage(page)} totalPage={Math.ceil(initialData.length / rowsPerPage)} />
+      </div>
+    </>
   )
 }
 

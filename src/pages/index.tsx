@@ -1,20 +1,21 @@
-import React, { ReactElement, useState } from 'react'
-import { useForm, SubmitHandler, FormProvider } from 'react-hook-form'
-import { Layout } from '@/components'
+import React, { ReactElement, useState, useEffect } from 'react'
+import { useDispatch } from 'react-redux'
+
 import type { NextPageWithLayout } from '@/pages/_app'
+import { Layout } from '@/components'
 import { FormInput } from '@/components/forms'
+import { breadcrumbAction } from '@/store/slices/loggedSlice/breadcrumbSlice'
 
 const Page: NextPageWithLayout = () => {
-  const method = useForm({
-    mode: 'onChange',
-    defaultValues: {
-      abc: '',
-    },
-  })
+  const dispatch = useDispatch()
 
-  const onSubmit = () => {
-    console.log(method.getValues())
-  }
+  useEffect(() => {
+    dispatch(
+      breadcrumbAction.updateBreadcrumb([
+        {title: 'Trang chủ'},
+      ])
+    )
+  }, [])
   return <>Khang</>
 }
 

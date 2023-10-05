@@ -78,15 +78,11 @@ const HowToKnowTab: React.FC = () => {
           content: 'font-[600] text-sm 13inch:text-base',
         }}
         className={`py-4 ${Style.referralCode}`}
-      >
-        212sda5czxc2
-      </Chip>
+      >212sda5czxc2</Chip>
       <h6
         className="font-[600] text-sm 13inch:text-base text-base-black-1"
         style={{ marginTop: '30px' }}
-      >
-        Các kênh social media của Vua Thợ
-      </h6>
+      >Các kênh social media của Vua Thợ</h6>
       <div className="flex space-x-5" style={{ marginTop: '12px' }}>
         {optionsSocialMedia.map(e => (
           <div key={e.id}>
@@ -100,22 +96,15 @@ const HowToKnowTab: React.FC = () => {
             />
             <label
               htmlFor={e.id}
-              className={`border-2 h-12 transition px-2 13inch:p-4 ease-in-out w-full rounded-md flex flex-col justify-center items-center cursor-pointer`}
-              style={{
-                borderColor: `${
-                  selectedSocialMedia === e.id ? '#246BFD' : '#E1E1E1'
-                }`,
-              }}
+              className={`border-2 h-12 aspect-square w-fit transition ease-in-out rounded-md flex flex-col justify-center items-center cursor-pointer`}
+              style={{ borderColor: `${selectedSocialMedia === e.id ? '#246BFD' : '#E1E1E1'}`}}
             >
               {e.content}
             </label>
           </div>
         ))}
       </div>
-      <h6
-        className="font-[600] text-sm 13inch:text-base text-base-black-1"
-        style={{ marginTop: '30px' }}
-      >
+      <h6 className="font-[600] text-sm 13inch:text-base text-base-black-1" style={{ marginTop: '30px' }}>
         Các kênh truyền thông bên ngoài mà Vua Thợ chạy marketing
       </h6>
       <div className="flex space-x-5" style={{ marginTop: '20px' }}>

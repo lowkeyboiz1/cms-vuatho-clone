@@ -21,9 +21,9 @@ const Page: NextPageWithLayout = () => {
   useEffect(() => {
     dispatch(
       breadcrumbAction.updateBreadcrumb([
-        'Trang chủ',
-        'Quản lí user khách hàng',
-      ]),
+        {title: 'Trang chủ', url: '/'}, 
+        {title: 'Quản lý User khách'}
+      ])
     )
   }, [])
 

@@ -1,289 +1,274 @@
-import { ReactElement, useEffect, useCallback, useMemo, useState } from 'react'
+import { ReactElement, useEffect, useState } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useDispatch } from 'react-redux'
 
-import { Layout } from '@/components'
 import { NextPageWithLayout } from '../_app'
 import { breadcrumbAction } from '@/store/slices/loggedSlice/breadcrumbSlice'
-import { SearchIcon, UserIcon } from '@/components/icon'
+import { Layout } from '@/components'
+import { DepartmentIcon } from '@/components/icon'
 import TableComponent from '@/components/table/table'
-import SearchInput from '@/components/input/search'
-import ModalComponent from '@/components/modal/index'
+import SummaryForm from '@/components/form/summary'
 
-import { Button, Input, useDisclosure } from '@nextui-org/react'
-import { Filter, Filter as FilterIcon, Man, Woman } from 'iconsax-react'
-import { ToastComponent } from '@/components/Toast'
-import SelectButton from '@/components/SelectButton'
+import { Button, Input, Tabs, Tab } from '@nextui-org/react'
+import { SearchIcon } from '@/components/icon'
+import { Add, Filter } from 'iconsax-react'
 
 const Page: NextPageWithLayout = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
     dispatch(
-      breadcrumbAction.updateBreadcrumb(['Trang chủ', 'Quản lý User thợ']),
+      breadcrumbAction.updateBreadcrumb([
+        {title: 'Trang chủ', url: '/'}, 
+        {title: 'Quản lí nhân viên Vua Thợ'}
+      ]),
     )
   }, [])
 
-  const router = useRouter()
-
-  const columns = [
-    { id: 'name', name: 'Họ tên', sortable: true },
-    { id: 'gender', name: 'Giới tính', sortable: true },
-    { id: 'dob', name: 'Ngày sinh' },
-    { id: 'totalIcome', name: 'Tổng thu nhập', sortable: true },
-    { id: 'job', name: 'Ngành nghề', sortable: true },
-    { id: 'phone', name: 'Số điện thoại' },
-  ]
-
-  const initialData = [
+  const tabs = [
     {
-      id: 'worker-1',
-      name: 'Alice',
-      gender: 'Nam',
-      dob: '12/23/2000',
-      totalIcome: 123123,
-      job: 'Thợ điện',
-      phone: '012313213',
+      id: 'employee',
+      label: 'NHÂN VIÊN VUA THỢ',
+      content: <EmployeeTab />,
     },
     {
-      id: 'worker-2',
-      name: 'slice',
-      gender: 'Nữ',
-      dob: '12/23/2000',
-      totalIcome: 345345,
-      job: 'Thợ điện',
-      phone: '012313213',
-    },
-    {
-      id: 'worker-3',
-      name: 'vlice',
-      gender: 'Nam',
-      dob: '12/23/2000',
-      totalIcome: 123123,
-      job: 'Thợ điện',
-      phone: '012313213',
-    },
-    {
-      id: 'worker-4',
-      name: 'rlice',
-      gender: 'Nữ',
-      dob: '12/23/2000',
-      totalIcome: 345345,
-      job: 'Thợ điện',
-      phone: '012313213',
-    },
-    {
-      id: 'worker-5',
-      name: 'wlice',
-      gender: 'Nam',
-      dob: '12/23/2000',
-      totalIcome: 123123,
-      job: 'Thợ điện',
-      phone: '012313213',
+      id: 'Department',
+      label: 'PHÒNG BAN',
+      content: <DepartmentTab />,
     },
   ]
 
-  const renderCell = (
-    dataItem: (typeof initialData)[number],
-    columnKey: React.Key,
-  ) => {
-    const cellValue = dataItem[columnKey as keyof typeof dataItem]
-
-    switch (columnKey) {
-      case 'totalIcome':
-        return <p>{cellValue.toLocaleString()}đ</p>
-      default:
-        return cellValue
-    }
-  }
-
-  const [filterValue, setFilterValue] = useState('')
-
-  const onClear = useCallback(() => {
-    setFilterValue('')
-  }, [])
-
-  const onSearchChange = useCallback((value?: string) => {
-    if (value) {
-      setFilterValue(value)
-    } else {
-      setFilterValue('')
-    }
-  }, [])
-
-  const hasSearchFilter = Boolean(filterValue)
-
-  const filteredItems = useMemo(() => {
-    let filteredUsers = [...initialData]
-
-    if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter(
-        user => user?.name.toLowerCase().includes(filterValue.toLowerCase()),
-      )
-    }
-    return filteredUsers
-  }, [filterValue])
-  const [select, setSelect] = useState<boolean>(false)
-
-  const [listSelected, setListSelected] = useState([])
   return (
-    <div className="h-[calc(100vh-110px)]">
-      <div className="flex mb-4 gap-6">
-        <div className="w-[300px] h-[100px] 13inch:w-[400px] 13inch:h-[110px] rounded-[16px] p-6 bg-primary-blue flex flex-col justify-center">
-          <div className="flex items-center gap-4">
-            <div className="h-[40px] 13inch:h-[56px] w-[40px] 13inch:w-[56px] rounded-full bg-[#92BEFF] flex items-center justify-center">
-              <UserIcon />
-            </div>
-            <div className="flex flex-col text-white">
-              <div className="text-xs 13inch:text-sm">Tổng số lượng thợ</div>
-              <div className="text-xl 13inch:text-2xl font-bold">500.000</div>
-            </div>
-          </div>
-        </div>
-        <div className="w-[300px] h-[100px] 13inch:w-[400px] 13inch:h-[110px] rounded-[16px] p-4 bg-white flex flex-col justify-center">
-          <div className="flex flex-col ">
-            <div className="text-xs 13inch:text-sm font-semibold">
-              Thợ đã EKYC
-            </div>
-            <div className="text-xl 13inch:text-2xl font-bold text-primary-blue">
-              500.000
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="flex justify-between">
-        <SelectButton
-          listSelected={listSelected}
-          select={select}
-          setSelect={setSelect}
-        />
-        <div className="flex gap-4">
-          <div className="">
-            <SearchInput
-              value={filterValue}
-              onChange={onSearchChange}
-              onClear={onClear}
-            />
-          </div>
-          <FilterModal />
-        </div>
-      </div>
-      <div className="mt-8">
-        <TableComponent
-          columns={columns}
-          initialData={filteredItems}
-          renderCell={renderCell}
-          onRowAction={id => router.push(`worker-management/${id}`)}
-          multiSelectTable={select ? 'multiple' : 'single'}
-          handleSelected={setListSelected}
-        />
-      </div>
-    </div>
+    <Tabs
+      aria-label="Tab about employees and departments"
+      items={tabs}
+      variant="underlined"
+      color="primary"
+      classNames={{
+        base: 'pb-2 rounded-b-2xl w-full',
+        tabList:
+          'gap-6 w-full relative rounded-none p-0 border-b border-divider',
+        cursor: 'w-full bg-[#246BFD]',
+        tab: 'max-w-fit px-2 h-12',
+        tabContent:
+          'group-data-[selected=true]:text-[#246BFD] font-[600] text-base',
+      }}
+    >
+      {item => (
+        <Tab key={item.id} title={item.label}>
+          <div>{item.content}</div>
+        </Tab>
+      )}
+    </Tabs>
   )
 }
+
 Page.getLayout = function getLayout(page: ReactElement) {
   return (
     <Layout>
       <Head>
-        <title>Quản lý User thợ</title>
+        <title>Quản lí nhân viên Vua Thợ</title>
       </Head>
       <>{page}</>
     </Layout>
   )
 }
 
-const FilterModal = () => {
-  const { isOpen, onOpenChange, onOpen, onClose } = useDisclosure()
-
-  const optionsGender = ['Nam', 'Nữ']
-
-  const [selectedGender, sSelectedGender] = useState<string>('')
-
-  const ModalBody = (
-    <div className="space-y-6 min-h-[400px]">
-      <div className="space-y-2 mt-2">
-        <span className="text-sm 13inch:text-base font-semibold">
-          Ngành nghề
-        </span>
-        <SearchInput styleInput="w-full" />
-      </div>
-      <div className="space-y-2">
-        <span className="text-sm 13inch:text-base font-semibold">
-          Giới tính
-        </span>
-        <div className="flex space-x-5">
-          {optionsGender.map(e => (
-            <div key={e}>
-              <input
-                type="radio"
-                id={e}
-                value={e}
-                name="gender"
-                checked={selectedGender.includes(e)}
-                onChange={() => sSelectedGender(e)}
-                hidden
-              />
-              <label
-                htmlFor={e}
-                className={`${
-                  selectedGender.includes(e)
-                    ? 'bg-primary-blue/70 text-white'
-                    : 'bg-base-gray'
-                } transition ease-in-out px-3 py-2 rounded-full flex flex-col justify-center items-center cursor-pointer`}
-                // style={{ borderColor: `${selectedGender.includes(e) ? '#246BFD' : 'transparent'}` }}
-              >
-                <div className="flex gap-2 items-center justify-center">
-                  <span>
-                    {e === 'Nam' ? <Man size="20" /> : <Woman size="20" />}
-                  </span>
-                  <span className="text-xs 13inch:text-sm">{e}</span>
-                </div>
-              </label>
-            </div>
-          ))}
+const DepartmentTab: React.FC = () => {
+  const dataDepartment = [
+    {
+      title: 'Ban quản lý',
+      desc: 'Nơi ban hành những quyết định chiến lược, dài hạn và ngắn hạn ảnh hưởng đến hoạt động của công ty',
+    },
+    {
+      title: 'Phòng kế toán',
+      desc: 'Thực hiện công việc về nghiệp vụ chuyên môn tài chính kế toán, bao gồm quản lý hạch toán, lập báo cáo tài chính, và xử lý các vấn đề liên quan đến tài chính của công ty',
+    },
+    {
+      title: 'Phòng nhân sự',
+      desc: 'Đảm nhiệm vai trò về tất cả vấn đề liên quan đến nhân sự của công ty, bao gồm tuyển dụng, đào tạo, quản lý hiệu suất, và chăm sóc nhân viên',
+    },
+    {
+      title: 'Phòng marketing',
+      desc: 'Chịu trách nhiệm xây dựng và triển khai chiến lược marketing, quảng cáo, và quản lý thương hiệu của công ty để thu hút và giữ chân khách hàng',
+    },
+    {
+      title: 'Phòng kỹ thuật',
+      desc: 'Đảm nhiệm công việc liên quan đến nghiên cứu, phát triển, và thiết kế sản phẩm hoặc dịch vụ của công ty',
+    },
+    {
+      title: 'Phòng bán hàng',
+      desc: 'Chịu trách nhiệm tiếp cận khách hàng, xây dựng mối quan hệ và thực hiện các hoạt động bán hàng để đạt được doanh số bán hàng',
+    },
+    {
+      title: 'Phòng hành chính',
+      desc: 'Quản lý các hoạt động hành chính của công ty, bao gồm quản lý văn phòng, hỗ trợ hành chính cho các phòng ban khác, và xử lý các vấn đề liên quan đến văn bản, tài liệu, và hợp đồng',
+    },
+  ]
+  return (
+    <div className="pb-5">
+      <h5 style={{ marginBottom: 24 }} className="text-3xl font-bold">
+        Tổng quan phòng ban
+      </h5>
+      <div className="grid grid-cols-4 gap-5">
+        <div
+          className={`p-6 bg-white rounded-2xl flex flex-col gap-6 min-h-[280px] shadow-[4px_4px_16px_0_rgba(0,18,38,0.08)]`}
+        >
+          <div className="space-y-2">
+            <h6 className="text-base">Tổng số lượng</h6>
+            <h6 className="text-xl font-bold">7 Phòng ban</h6>
+          </div>
+          <div className="flex flex-col justify-center items-center h-full">
+            <DepartmentIcon />
+          </div>
         </div>
+        {dataDepartment.map(item => (
+          <div
+            key={item.title}
+            className="bg-white rounded-2xl p-6 space-y-6 min-h-[280px] shadow-[4px_4px_16px_0_rgba(0,18,38,0.08)]"
+          >
+            <h6 className="text-xl font-bold">{item.title}</h6>
+            <p className="text-base">{item.desc}</p>
+          </div>
+        ))}
       </div>
     </div>
   )
+}
 
-  const handleConfirm = () => {
-    if (selectedGender.length === 0) {
-      ToastComponent({
-        message: 'Vui lòng nhập đầy đủ thông tin',
-        type: 'error',
-      })
-    } else {
-      onClose()
-    }
-  }
+const EmployeeTab: React.FC = () => {
+  const router = useRouter()
+
+  const columns = [
+    { id: 'fullName', name: 'Họ tên', sortable: true },
+    { id: 'dob', name: 'Ngày sinh' },
+    { id: 'email', name: 'Email' },
+    { id: 'location', name: 'Vị trí', sortable: true },
+    { id: 'deparment', name: 'Phòng ban', sortable: true },
+  ]
+
+  const initialData = [
+    {
+      id: 1,
+      fullName: 'Alice',
+      dob: '28/01/1999',
+      email: 'tainangtre@gmail.com',
+      location: 'TP HCM',
+      deparment: 'Thợ sửa máy lạnh',
+    },
+    {
+      id: 2,
+      fullName: 'flice',
+      dob: '22/02/1999',
+      email: 'tainangtre@gmail.com',
+      location: 'TP HCM',
+      deparment: 'Thợ sửa máy lạnh',
+    },
+    {
+      id: 3,
+      fullName: 'elice',
+      dob: '23/04/1999',
+      email: 'tainangtre@gmail.com',
+      location: 'TP HCM',
+      deparment: 'Thợ sửa máy lạnh',
+    },
+    {
+      id: 4,
+      fullName: 'qlice',
+      dob: '27/06/1999',
+      email: 'tainangtre@gmail.com',
+      location: 'TP HCM',
+      deparment: 'Thợ sửa máy lạnh',
+    },
+    {
+      id: 5,
+      fullName: 'ylice',
+      dob: '26/02/1999',
+      email: 'tainangtre@gmail.com',
+      location: 'TP HCM',
+      deparment: 'Thợ sửa máy lạnh',
+    },
+    {
+      id: 6,
+      fullName: 'hlice',
+      dob: '25/07/1999',
+      email: 'tainangtre@gmail.com',
+      location: 'TP HCM',
+      deparment: 'Thợ sửa máy lạnh',
+    },
+    {
+      id: 7,
+      fullName: 'mlice',
+      dob: '21/08/1999',
+      email: 'tainangtre@gmail.com',
+      location: 'TP HCM',
+      deparment: 'Thợ sửa máy lạnh',
+    },
+    {
+      id: 8,
+      fullName: 'tlice',
+      dob: '22/04/1999',
+      email: 'tainangtre@gmail.com',
+      location: 'TP HCM',
+      deparment: 'Thợ sửa máy lạnh',
+    },
+  ]
+
+  //pagination
+  const [page, setPage] = useState<number>(1)
+  const rowsPerPage = 3
+
   return (
-    <>
-      <Button
-        onPress={onOpen}
-        size="md"
-        startContent={<Filter size="24" />}
-        className="rounded-[16px] px-[19px] text-base-drak-gray bg-transparent border-[2px] border-base-gray-2"
-      >
-        Bộ lọc
-      </Button>
-      <ModalComponent
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        onConfirm={handleConfirm}
-        modalTitle={
-          <div className="flex items-center gap-2">
-            <FilterIcon size="24" />
-            <span>Bộ lọc</span>
-          </div>
-        }
-        btnAnotherContent="Bỏ chọn"
-        propsModal={{
-          size: '3xl',
-        }}
-        modalBody={ModalBody}
-      />
-    </>
+    <div className="">
+      <SummaryForm title="Tổng số lượng nhân viên" quality={1000} />
+      <div className="flex justify-between mt-4">
+        <div className="">
+          <Button
+            size="lg"
+            className="rounded-[16px] px-[42px] text-base-drak-gray bg-transparent border-[2px] border-base-gray-2"
+          >
+            Chọn
+          </Button>
+        </div>
+        <div className="flex gap-4">
+          <Input
+            className="bg-transparent border-[1px] border-base-gray-2 rounded-2xl"
+            placeholder="Tìm kiếm"
+            size="lg"
+            startContent={
+              <SearchIcon className={'text-base-drak-gray text-xl'} />
+            }
+            type="text"
+          />
+          <Button
+            size="lg"
+            startContent={<Filter size="20" />}
+            className="rounded-[16px] px-[19px] text-base-drak-gray bg-transparent text-sm border-[2px] border-base-gray-2 flex flex-shrink-0"
+          >
+            Bộ lọc
+          </Button>
+          <Button
+            size="lg"
+            className="rounded-[16px] px-[19px] text-white bg-primary-blue text-sm font-semibold flex flex-shrink-0"
+            startContent={<Add size={20} />}
+          >
+            Tạo mới
+          </Button>
+        </div>
+      </div>
+      <div className="mt-8">
+        <TableComponent
+          columns={columns}
+          page={page}
+          setPage={setPage}
+          rowsPerPage={rowsPerPage}
+          multiSelectTable="multiple"
+          initialData={initialData}
+          onRowAction={id => router.push(`employee-management/${id}`)}
+        />
+      </div>
+    </div>
   )
 }
 

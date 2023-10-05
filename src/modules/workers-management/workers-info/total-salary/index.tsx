@@ -1,6 +1,6 @@
 import { ArrowDown2 } from 'iconsax-react'
 import { useMemo, useState } from 'react'
-import styles from './TotalSalary.module.css'
+
 import {
   Button,
   Dropdown,
@@ -10,24 +10,6 @@ import {
 } from '@nextui-org/react'
 
 const TotalSalaryTab = () => {
-  const items = [
-    {
-      key: 'new',
-      label: 'New file',
-    },
-    {
-      key: 'copy',
-      label: 'Copy link',
-    },
-    {
-      key: 'edit',
-      label: 'Edit file',
-    },
-    {
-      key: 'delete',
-      label: 'Delete file',
-    },
-  ]
 
   const [selectedKeys, setSelectedKeys] = useState<any>('Ngành nghề')
   const [isSelect, setIsSelect] = useState(false)
@@ -42,7 +24,7 @@ const TotalSalaryTab = () => {
   }
 
   return (
-    <div className="bg-white flex flex-col gap-6 mt-4 p-6 rounded-2xl">
+    <div className="space-y-6">
       <div className="flex gap-6">
         <Button
           onClick={() => setIsSelect(false)}
@@ -50,10 +32,7 @@ const TotalSalaryTab = () => {
           className={`text-white ${
             isSelect ? 'bg-base-gray text-base-black-1' : 'bg-primary-blue'
           } text-sm 13inch:text-base`}
-        >
-          Tất cả ngành nghề
-        </Button>
-
+        >Tất cả ngành nghề</Button>
         <Dropdown>
           <DropdownTrigger>
             <Button
@@ -86,31 +65,20 @@ const TotalSalaryTab = () => {
           </DropdownMenu>
         </Dropdown>
       </div>
-
-      <div className="flex gap-6">
-        <div
-          className={`p-6 w-full flex flex-col gap-6 rounded-2xl  ${styles.bgBlue}`}
-        >
-          <div className="text-base-black-1 text-sm 13inch:text-base font-semibold">
-            Tổng thu nhập
-          </div>
-          <div
-            className={`text-xl 13inch:text-2xl font-bold ${styles.textBlue}`}
-          >
+      <div className="grid grid-cols-3 gap-6">
+        <div className='p-6 w-full flex flex-col gap-6 rounded-2xl bg-[#F1F6FF]'>
+          <h6 className="text-base-black-1 text-sm 13inch:text-base font-semibold">Tổng thu nhập</h6>
+          <span className={`text-xl 13inch:text-2xl font-bold text-[#246BFD]`}>
             200.000.000đ
-          </div>
+          </span>
         </div>
-        <div
-          className={`p-6 w-full  flex flex-col gap-6 rounded-2xl  ${styles.bgBlue}`}
-        >
-          <div className="text-base-black-1 text-sm 13inch:text-base font-semibold">
+        <div className='p-6 w-full  flex flex-col gap-6 rounded-2xl bg-[#F1F6FF]'>
+          <h6 className="text-base-black-1 text-sm 13inch:text-base font-semibold">
             Tổng thu nhập
-          </div>
-          <div
-            className={`text-xl 13inch:text-2xl font-bold ${styles.textBlue}`}
-          >
+          </h6>
+          <span className={`text-xl 13inch:text-2xl font-bold text-[#246BFD]`}>
             200.000.000đ
-          </div>
+          </span>
         </div>
       </div>
     </div>

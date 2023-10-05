@@ -32,6 +32,8 @@ type TableType = {
   renderCell?: (dataItem: any, columnKey: React.Key) => React.ReactNode
   onRowAction?: (key: any) => void
   handleSelected?: any
+  page: number
+  setPage: any
 }
 
 const TableComponent: React.FC<TableType> = ({
@@ -43,45 +45,42 @@ const TableComponent: React.FC<TableType> = ({
   renderCell,
   onRowAction,
   handleSelected,
+  page,
+  setPage,
 }) => {
-  const [page, setPage] = useState<number>(1)
   const [data, setData] = useState<any[]>(initialData)
 
-  const RowsPerPage = rowsPerPage ? rowsPerPage : 3
-
-  const pages = Math.ceil(data.length / RowsPerPage)
-
   const items = useMemo(() => {
-    const start = (page - 1) * RowsPerPage
-    const end = start + RowsPerPage
+    const start = (page - 1) * (rowsPerPage || 5)
+    const end = start + (rowsPerPage || 5)
 
     return data.slice(start, end)
   }, [page, data])
 
-  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
-    column: 'id',
-    direction: 'descending',
-  })
+  // const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
+  //   column: 'id',
+  //   direction: 'descending',
+  // })
+
+  // useEffect(() => {
+  //   const sortedData = [...data].sort((a, b) => {
+  //     const first = a[sortDescriptor.column as keyof typeof a] as number
+  //     const second = b[sortDescriptor.column as keyof typeof b] as number
+  //     const cmp = first < second ? -1 : first > second ? 1 : 0
+
+  //     return sortDescriptor.direction === 'descending' ? -cmp : cmp
+  //   })
+
+  //   setData(sortedData)
+  //   setPage(1)
+  // }, [sortDescriptor])
+
+  // const handleSortChange = (newSortDescriptor: SortDescriptor) => {
+  //   setSortDescriptor(newSortDescriptor)
+  // }
 
   useEffect(() => {
-    const sortedData = [...data].sort((a, b) => {
-      const first = a[sortDescriptor.column as keyof typeof a] as number
-      const second = b[sortDescriptor.column as keyof typeof b] as number
-      const cmp = first < second ? -1 : first > second ? 1 : 0
-
-      return sortDescriptor.direction === 'descending' ? -cmp : cmp
-    })
-
-    setData(sortedData)
-  }, [sortDescriptor])
-
-  const handleSortChange = (newSortDescriptor: SortDescriptor) => {
-    setSortDescriptor(newSortDescriptor)
-  }
-
-  useEffect(() => {
-    setData(initialData)
-    setPage(1)
+    initialData && setData(initialData)
   }, [initialData])
 
   return (
@@ -94,31 +93,10 @@ const TableComponent: React.FC<TableType> = ({
             }
           : () => {}
       }
-      bottomContent={
-        <div className="flex w-full justify-center">
-          <Pagination
-            isCompact
-            showControls
-            color="secondary"
-            page={page}
-            total={pages}
-            onChange={page => setPage(page)}
-            classNames={{
-              item: Style.itemPagi,
-              cursor: 'bg-[#282828] text-white',
-              wrapper: 'gap-3 shadow-none',
-              prev: Style.controlPagi,
-              next: Style.controlPagi,
-            }}
-            radius="full"
-            size="md"
-          />
-        </div>
-      }
       bottomContentPlacement="outside"
       selectionMode={multiSelectTable || 'none'}
-      onSortChange={handleSortChange}
-      sortDescriptor={sortDescriptor}
+      // onSortChange={handleSortChange}
+      // sortDescriptor={sortDescriptor}
       classNames={{
         wrapper: Style.wrapperTable,
         th: Style.thTable,
@@ -126,6 +104,7 @@ const TableComponent: React.FC<TableType> = ({
         td: `${Style.tdTable} ${onRowAction && 'cursor-pointer'}`,
       }}
       onRowAction={onRowAction}
+      className='pb-10'
     >
       <TableHeader columns={columns}>
         {column => (
@@ -134,14 +113,12 @@ const TableComponent: React.FC<TableType> = ({
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody items={items} emptyContent={'Chưa có dữ liệu'}>
+      <TableBody items={data} emptyContent={'Chưa có dữ liệu'}>
         {item => (
           <TableRow key={item.id}>
             {columnKey => (
               <TableCell>
-                {renderCell
-                  ? renderCell(item, columnKey)
-                  : (item as any)[columnKey]}
+                {renderCell ? renderCell(item, columnKey) : (item as any)[columnKey]}
               </TableCell>
             )}
           </TableRow>

@@ -17,26 +17,25 @@ const EKYCTab: React.FC = () => {
   ]
 
   return (
-    <div className="bg-white rounded-2xl">
-      <Tabs
-        aria-label="EKYC's Worker User Information Tab"
-        items={listTab}
-        variant="light"
-        color="primary"
-        classNames={{
-          tab: 'bg-base-gray px-4 h-10',
-          cursor: 'bg-primary-blue w-full',
-          tabList: 'gap-6',
-          tabContent: Styles.tabContent,
-        }}
-      >
-        {item => (
-          <Tab key={item.id} title={item.label}>
-            <div className="pt-3 min-h-[300px]">{item.content}</div>
-          </Tab>
-        )}
-      </Tabs>
-    </div>
+    <Tabs
+      aria-label="EKYC's Worker User Information Tab"
+      items={listTab}
+      variant="light"
+      color="primary"
+      classNames={{
+        tab: 'bg-base-gray px-4 h-10',
+        cursor: 'bg-primary-blue w-full',
+        tabList: 'gap-6',
+        panel: 'px-0',
+        tabContent: Styles.tabContent,
+      }}
+    >
+      {item => (
+        <Tab key={item.id} title={item.label}>
+          <div className="pt-3 min-h-[300px]">{item.content}</div>
+        </Tab>
+      )}
+    </Tabs>
   )
 }
 
@@ -117,42 +116,33 @@ const ExperienceTab: React.FC = () => {
   return (
     <div className="flex flex-col gap-6">
       {listExp.map(e => (
-        <div
-          key={e.id}
-          className="text-base-gray rounded-2xl border-[1px] border-base-gray-2 p-6 flex gap-6"
-        >
-          <div className="flex flex-col gap-2 ">
-            <h6 className=" text-xs 13inch:text-base font-semibold">
-              Công việc
-            </h6>
-            <span className="font-normal text-xs 13inch:text-base py-3 px-4 flex items-center bg-base-gray rounded-lg">
+        <div key={e.id} className="rounded-2xl border-[1px] border-base-gray-2 p-6 grid grid-cols-5 gap-6">
+          <div className="space-y-2">
+            <h6 className="text-base font-semibold">Công việc</h6>
+            <span className="font-normal text-sm py-3 px-4 flex items-center bg-base-gray rounded-lg">
               {e.job}
             </span>
           </div>
-          <div className="flex flex-col gap-2">
-            <h6 className="font-semibold text-xs 13inch:text-base">Công ty</h6>
-            <span className="font-normal text-xs 13inch:text-sm py-3 px-4 flex items-center bg-base-gray rounded-lg">
+          <div className="space-y-2">
+            <h6 className="font-semibold text-base">Công ty</h6>
+            <span className="font-normal text-sm py-3 px-4 flex items-center bg-base-gray rounded-lg">
               {e.company}
             </span>
           </div>
-          <div className="flex flex-col gap-2">
-            <h6 className="font-semibold text-xs 13inch:text-base">
-              Thời gian làm việc
-            </h6>
-            <span className="font-normal text-xs 13inch:text-sm py-3 px-4 flex items-center bg-base-gray rounded-lg">
+          <div className="space-y-2">
+            <h6 className="font-semibold text-base">Thời gian làm việc</h6>
+            <span className="font-normal text-sm py-3 px-4 flex items-center bg-base-gray rounded-lg">
               {e.timeline}
             </span>
           </div>
-          <div className="flex flex-col gap-2">
-            <h6 className="font-semibold text-xs 13inch:text-base">
-              Bằng cấp liên quan
-            </h6>
+          <div className="space-y-2 col-span-2">
+            <h6 className="font-semibold text-base">Bằng cấp liên quan</h6>
             <div className="flex gap-4">
-              <div className="text-xs 13inch:text-sm text-base-black-1 flex gap-4 13inch:gap-2 bg-base-gray px-4 h-[40px] items-center rounded-lg">
+              <div className="text-sm text-base-black-1 flex gap-4 bg-base-gray px-4 h-[40px] items-center rounded-lg">
                 <span className="font-normal w-full">bangcap.docx</span>
                 <button className="text-primary-blue font-semibold">Xem</button>
               </div>
-              <div className="text-xs 13inch:text-sm text-base-black-1 flex gap-4 13inch:gap-2 bg-base-gray px-4 h-[40px] items-center rounded-lg">
+              <div className="text-sm  text-base-black-1 flex gap-4 bg-base-gray px-4 h-[40px] items-center rounded-lg">
                 <span className="font-normal w-full">bangcap.pdf</span>
                 <button className="text-primary-blue font-semibold">Xem</button>
               </div>

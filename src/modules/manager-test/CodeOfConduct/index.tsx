@@ -1,7 +1,13 @@
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+
 import { ExportIcon, SearchIcon } from '@/components/icon'
 import TableComponent from '@/components/table/table'
 import DefaultModal from '@/components/modal'
+import { ToastComponent } from '@/components/Toast'
+import SelectButton from '@/components/SelectButton'
+import Pagi from '@/components/pagination'
+
 import {
   Button,
   Checkbox,
@@ -16,9 +22,6 @@ import {
   Filter,
   SearchNormal1,
 } from 'iconsax-react'
-import { ToastComponent } from '@/components/Toast'
-import { useRouter } from 'next/router'
-import SelectButton from '@/components/SelectButton'
 
 function CodeOfConduct(this: any) {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
@@ -253,7 +256,7 @@ function CodeOfConduct(this: any) {
       // onClose()
     }
   }
-// log
+
   const handleSubmit = () => {
     handleCreate()
   }
@@ -271,7 +274,11 @@ function CodeOfConduct(this: any) {
 
   const [listSelected, setListSelected] = useState([])
   const router = useRouter()
-  //lo
+
+  //pagination
+  const [page, setPage] = useState<number>(1)
+  const rowsPerPage = 3
+
   return (
     <>
       <div className="flex justify-between mt-[20px]">
@@ -306,8 +313,10 @@ function CodeOfConduct(this: any) {
       <div className="mt-4">
         <TableComponent
           columns={columns}
+          page={page}
+          setPage={setPage}
+          rowsPerPage={rowsPerPage}
           initialData={initialData}
-          rowsPerPage={8}
           onRowAction={_handleSelect}
           multiSelectTable={select ? 'multiple' : 'single'}
           handleSelected={setListSelected}
@@ -464,6 +473,9 @@ function CodeOfConduct(this: any) {
             </div>
           }
         />
+      </div>
+      <div className='absolute bottom-5 w-full'>
+        <Pagi totalItem={8} page={page} onChange={page => setPage(page)} totalPage={Math.ceil(initialData.length / rowsPerPage)} />
       </div>
     </>
   )

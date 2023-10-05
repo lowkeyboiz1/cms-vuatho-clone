@@ -9,10 +9,11 @@ import { Layout } from '@/components'
 import TableComponent from '@/components/table/table'
 import { SearchIcon } from '@/components/icon'
 import DefaultModal from '@/components/modal'
+import Pagi from '@/components/pagination'
+import { ToastComponent } from '@/components/Toast'
 
 import { Add, Add as AddIcon, Filter } from 'iconsax-react'
 import { Button, Input, useDisclosure } from '@nextui-org/react'
-import { ToastComponent } from '@/components/Toast'
 
 const Page: NextPageWithLayout = () => {
   const router = useRouter()
@@ -22,9 +23,9 @@ const Page: NextPageWithLayout = () => {
   useEffect(() => {
     dispatch(
       breadcrumbAction.updateBreadcrumb([
-        'Trang chủ',
-        'Quản lí ngành',
-        'Quản lí nghề',
+        {title: 'Trang chủ', url: '/'}, 
+        {title: 'Quản lí ngành', url: '/job-management'},
+        {title: 'Quản lí nghề'}
       ]),
     )
   }, [])
@@ -82,6 +83,10 @@ const Page: NextPageWithLayout = () => {
     }
   }
 
+  //pagination
+  const [page, setPage] = useState<number>(1)
+  const rowsPerPage = 3
+
   return (
     <>
       <div className="font-bold text-[32px] mt-3">Tên ngành</div>
@@ -118,11 +123,16 @@ const Page: NextPageWithLayout = () => {
       </div>
       <TableComponent
         columns={columns}
+        page={page}
+        setPage={setPage}
+        rowsPerPage={rowsPerPage}
         initialData={initialData}
-        rowsPerPage={10}
         renderCell={renderCell}
         // multiSelectTable="multiple"
       />
+      <div className='absolute bottom-5 w-full'>
+        <Pagi totalItem={8} page={page} onChange={page => setPage(page)} totalPage={Math.ceil(initialData.length / rowsPerPage)} />
+      </div>
     </>
   )
 }

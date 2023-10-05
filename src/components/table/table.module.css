@@ -1,12 +1,3 @@
-.itemPagi {
-  @apply bg-transparent text-xs 13inch:text-sm font-semibold !rounded-full text-[#282828] border-[1px] border-[#e1e1e1];
-}
-
-.controlPagi {
-  @apply bg-transparent;
-  border-radius: 999px !important;
-}
-
 .wrapperTable {
   @apply min-h-[222px] p-0;
   box-shadow: 4px 4px 16px 0px rgba(0, 18, 38, 0.08);

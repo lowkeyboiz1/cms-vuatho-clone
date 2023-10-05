@@ -14,7 +14,6 @@ function SelectButton({
       <div className={listSelected?.length > 0 ? 'hidden' : 'block'}>
         <Button
           onClick={() => setSelect(!select)}
-          // 'text-base-drak-gray bg-transparent'3748a0
           size="md"
           className={`rounded-[16px] px-[42px] ${
             select

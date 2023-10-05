@@ -3,7 +3,7 @@ import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 
 import { ThemeProvider } from '@/providers'
-import { RootState, wrapper } from '@/store'
+import { wrapper } from '@/store'
 
 import '@/styles/globals.scss'
 
@@ -18,7 +18,6 @@ type AppPropsWithLayout = AppProps & {
 }
 
 function App({ Component, pageProps }: AppPropsWithLayout) {
-  // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout ?? (page => page)
 
   return (
@@ -31,7 +30,6 @@ function App({ Component, pageProps }: AppPropsWithLayout) {
             stopDelayMs={200}
             height={3}
           />
-          {/* <ToastContainer /> */}
           <Component {...pageProps} />
         </>,
       )}

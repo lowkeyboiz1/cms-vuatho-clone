@@ -31,6 +31,8 @@ import {
 } from 'iconsax-react'
 import { v4 as uuidv4 } from 'uuid'
 import { useRouter } from 'next/router'
+import instance from '@/services/axiosConfig'
+import { objectToFormData } from '@/utils'
 
 const Page: NextPageWithLayout = () => {
   const dispatch = useDispatch()
@@ -47,27 +49,35 @@ const Page: NextPageWithLayout = () => {
   // const inputUpload = useRef();
   const inputUpload: RefObject<HTMLInputElement> = useRef(null)
 
-  const [questionContent, sQuestionContent] = useState<string>('')
-  const [questionTime, sQuestionTime] = useState<number>(0)
-  const [questionPoint, sQuestionPoint] = useState<number>(0)
-  const [listFile, sListFile] = useState<
+  const [questionContent, setQuestionContent] = useState<string>('')
+  const [questionTime, setQuestionTime] = useState<number>(0)
+  const [questionPoint, setQuestionPoint] = useState<number>(0)
+  const [questionJob, setQuestionJob] = useState<string>('')
+  const [listFile, setListFile] = useState<
     { id: string; file: string; thumb: File | null }[]
   >([])
-  const [answerList, sAnswerList] = useState<
+  const [answerList, setAnswerList] = useState<
     { id: any; content: string; checked: boolean }[]
   >([
     { id: 'answer-1', content: '', checked: false },
     { id: 'answer-2', content: '', checked: false },
   ])
 
-  const [errorQuestionContent, sErrorQuestionContent] = useState<boolean>(false)
-  const [errorQuestionTime, sErrorQuestionTime] = useState<boolean>(false)
-  const [errorQuestionPoint, sErrorQuestionPoint] = useState<boolean>(false)
-  const [errorAnswer, sErrorAnswer] = useState<boolean>(false)
+  const questionConfig: any = {
+    0: 'Quy tắc ứng xử',
+    1: 'Nghiệp vụ',
+  }
+  const [errorQuestionContent, setErrorQuestionContent] =
+    useState<boolean>(false)
+  const [errorQuestionTime, setErrorQuestionTime] = useState<boolean>(false)
+  const [errorQuestionPoint, setErrorQuestionPoint] = useState<boolean>(false)
+  const [errorAnswer, setErrorAnswer] = useState<boolean>(false)
+  const [errorQuestionJob, setErrorQuestionjob] = useState<boolean>(false)
+  const [errorQuestionType, setErrorQuestionType] = useState<boolean>(false)
 
   const _HandleAddAnswer = () => {
     const newAnswer = { id: Date.now(), content: '', checked: false }
-    sAnswerList([...answerList, newAnswer])
+    setAnswerList([...answerList, newAnswer])
   }
 
   const _HandleActionAnswer = (
@@ -78,7 +88,7 @@ const Page: NextPageWithLayout = () => {
   ) => {
     if (type == 'delete') {
       const newList = answerList.filter(e => e.id !== id.id)
-      sAnswerList(newList)
+      setAnswerList(newList)
     } else if (type == 'change') {
       const newList = answerList.map(e => {
         if (e.id == id) {
@@ -91,20 +101,21 @@ const Page: NextPageWithLayout = () => {
         }
         return e
       })
-      sAnswerList(newList)
+      setAnswerList(newList)
     }
   }
 
   const _HandleChangeValue = (type: string, value?: any) => {
     if (type == 'questionContent') {
-      sQuestionContent(value.target.value)
+      setQuestionContent(value.target.value)
+    } else if (type == 'questionJob') {
+      setQuestionJob(value.target.value)
     } else if (type == 'questionTime') {
-      sQuestionTime(Number(value.target.value))
+      setQuestionTime(Number(value.target.value))
     } else if (type == 'questionPoint') {
-      sQuestionPoint(Number(value.target.value))
+      setQuestionPoint(Number(value.target.value))
     } else if (type == 'uploadFile' && value?.target) {
       const newFiles = Array.from(value.target.files) as File[]
-      console.log(newFiles)
 
       if (newFiles.length > 0) {
         const newData = newFiles.map(file => ({
@@ -112,9 +123,7 @@ const Page: NextPageWithLayout = () => {
           file: URL.createObjectURL(file),
           thumb: file,
         }))
-
-
-        sListFile(prevListFile => [...prevListFile, ...newData])
+        setListFile(prevListFile => [...prevListFile, ...newData])
       }
 
       if (inputUpload.current) {
@@ -126,9 +135,9 @@ const Page: NextPageWithLayout = () => {
   const _HandleDeleteFile = (type: string, id?: any) => {
     if (type == 'item') {
       const newData = listFile.filter(image => image.id !== id)
-      sListFile(newData)
+      setListFile(newData)
     } else if (type == 'all') {
-      sListFile([])
+      setListFile([])
     }
   }
 
@@ -145,7 +154,7 @@ const Page: NextPageWithLayout = () => {
           onOpen()
         } else {
           const newList = answerList.filter(e => e.id !== id.id)
-          sAnswerList(newList)
+          setAnswerList(newList)
         }
       }
     }
@@ -198,15 +207,19 @@ const Page: NextPageWithLayout = () => {
 
     if (
       questionContent == '' ||
+      questionJob == '' ||
+      selectedQuestionOptions == '' ||
       questionTime == 0 ||
       questionPoint == 0 ||
       !checkConditionAnswer
     ) {
       console.log('error')
-      questionContent == '' && sErrorQuestionContent(true)
-      questionTime == 0 && sErrorQuestionTime(true)
-      questionPoint == 0 && sErrorQuestionPoint(true)
-      !checkConditionAnswer && sErrorAnswer(true)
+      questionContent == '' && setErrorQuestionContent(true)
+      questionJob == '' && setErrorQuestionjob(true)
+      selectedQuestionOptions == '' && setErrorQuestionType(true)
+      questionTime == 0 && setErrorQuestionTime(true)
+      questionPoint == 0 && setErrorQuestionPoint(true)
+      !checkConditionAnswer && setErrorAnswer(true)
       ToastComponent({
         message: 'Vui lòng nhập đầy đủ thông tin',
         type: 'error',
@@ -214,18 +227,45 @@ const Page: NextPageWithLayout = () => {
     } else {
       console.log('success')
 
+      const payload = {
+        data: [
+          {
+            question: questionContent,
+            // listFile,
+            answers: answerList.map(a => ({
+              answer: a.content,
+              is_correct: a.checked,
+            })),
+            time: questionTime,
+            point: questionPoint,
+            services: [1],
+            type: selectedQuestionOptions,
+          },
+          
+        ],
+      }
+
+      const data = objectToFormData(payload)
+      console.log(payload)
+
+      instance.post('/input-testing/questions', data)
       console.log({
         questionContent,
         listFile,
         answerList,
         questionTime,
         questionPoint,
+        questionJob,
+        selectedQuestionOptions,
       })
 
-      sErrorQuestionContent(false)
-      sErrorQuestionTime(false)
-      sErrorQuestionPoint(false)
-      sErrorAnswer(false)
+      setErrorQuestionContent(false)
+      setErrorQuestionTime(false)
+      setErrorQuestionPoint(false)
+      setErrorQuestionPoint(false)
+      setErrorAnswer(false)
+      setErrorQuestionjob(false)
+      setErrorQuestionjob(false)
       ToastComponent({
         message: 'Tạo câu hỏi thành công',
         type: 'success',
@@ -233,11 +273,84 @@ const Page: NextPageWithLayout = () => {
       router.push('/question-management')
     }
   }
+  const optionsQuestion = [0, 1]
+  const [selectedQuestionOptions, setSelectedQuestionOptions] =
+    useState<string>('')
 
   return (
-    <form onSubmit={_HandleSubmit.bind(this)} className="">
+    <form onSubmit={_HandleSubmit.bind(this)} className="relative w-full">
       <h5 className="text-2xl font-bold mb-4">Tạo mới câu hỏi</h5>
       <div className="p-8 bg-white rounded-2xl space-y-8 pb-28">
+        <div className="space-y-2">
+          <label className="text-base font-[600]">
+            Ngành nghề <span className="text-red-500">*</span>
+          </label>
+          <Textarea
+            minRows={1}
+            value={questionJob}
+            onChange={_HandleChangeValue.bind(this, 'questionJob')}
+            placeholder="Nhập câu hỏi..."
+            validationState={
+              errorQuestionJob && questionJob == '' ? 'invalid' : 'valid'
+            }
+            errorMessage={
+              <span
+                className={`${
+                  errorQuestionJob && questionJob == ''
+                    ? 'visible'
+                    : 'invisible'
+                } transition`}
+              >
+                Nhập nội dung câu hỏi
+              </span>
+            }
+            variant="bordered"
+            className="text-sm"
+            classNames={{
+              label: 'text-base font-[600] mb-2',
+              inputWrapper: 'py-1 px-4',
+              input: 'placeholder:text-base-drak-gray',
+            }}
+          />
+        </div>
+        <div className="space-y-2 flex gap-2 flex-col">
+          <label className="text-base font-[600]">
+            Loại câu hỏi <span className="text-red-500">*</span>
+          </label>
+          <div className="flex gap-2 items-center">
+            {optionsQuestion.map(e => (
+              <div key={e}>
+                <input
+                  type="radio"
+                  id={e.toString()}
+                  value={e}
+                  name="gender"
+                  checked={selectedQuestionOptions.includes(e.toString())}
+                  onChange={() => setSelectedQuestionOptions(e.toString())}
+                  hidden
+                />
+                <label
+                  htmlFor={e.toString()}
+                  className={`${
+                    selectedQuestionOptions.includes(e.toString())
+                      ? 'bg-primary-blue/70 text-white'
+                      : 'bg-base-gray'
+                  } transition ease-in-out select-none px-4 py-2 rounded-full flex flex-col justify-center items-center cursor-pointer`}
+                  // style={{ borderColor: `${selectedQuestionOptions.includes(e) ? '#246BFD' : 'transparent'}` }}
+                >
+                  <span>{questionConfig[e.toString()]}</span>
+                </label>
+              </div>
+            ))}
+          </div>
+          <span
+            className={`${
+              errorAnswer && !checkConditionAnswer ? 'visible' : 'invisible'
+            } text-[13px] text-red-500`}
+          >
+            Vui lòng chọn loại câu hỏi
+          </span>
+        </div>
         <div className="space-y-2">
           <div>
             <label className="text-base font-[600]">
@@ -273,7 +386,7 @@ const Page: NextPageWithLayout = () => {
               }}
             />
           </div>
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
             <div className="flex justify-between items-center">
               <label className="text-base font-[600]">
                 Đính kèm Video/Hình ảnh/PDF{' '}
@@ -339,7 +452,7 @@ const Page: NextPageWithLayout = () => {
             </div>
           </div>
         </div>
-        <div className="space-y-3">
+        <div className="space-y-2">
           <div className="flex justify-between items-center">
             <label className="text-base font-[600]">
               Câu trả lời <span className="text-red-500">*</span>
@@ -485,7 +598,7 @@ const Page: NextPageWithLayout = () => {
           />
         </div>
       </div>
-      <footer className="fixed bottom-0 right-0 left-0 py-4 px-12 z-10 bg-white flex gap-6 items-center justify-end shadow-[0px_-4px_16px_0px_rgba(0,0,0,0.08)]">
+      <footer className="fixed w-full z-[1] bottom-0 right-0 left-0 py-4 px-12  bg-white flex gap-6 items-center justify-end shadow-[0px_-4px_16px_0px_rgba(0,0,0,0.08)]">
         <CancelComponent handleCancle={handleCancle} />
         <Button
           size="lg"

@@ -1,5 +1,6 @@
 export interface IUserInfo {
   isAuth: boolean
   isLoading: boolean
-  name: string
+  full_name: string
+  email: string
 }

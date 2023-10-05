@@ -31,9 +31,9 @@ const PageDetailsUser: NextPageWithLayout = () => {
   useEffect(() => {
     dispatch(
       breadcrumbAction.updateBreadcrumb([
-        'Trang chủ',
-        'Quản lý User thợ',
-        'Chi tiết User thợ',
+        {title: 'Trang chủ', url: '/'}, 
+        {title: 'Quản lý User thợ', url: '/worker-management'},
+        {title: 'Chi tiết User thợ'}
       ]),
     )
   }, [])
@@ -123,11 +123,8 @@ const PageDetailsUser: NextPageWithLayout = () => {
         />
         <div className="w-full flex flex-col gap-8">
           <div className="text-base-black-1">
-            <div className="text-lg 13inch:text-2xl font-bold">
-              Lâm Hoài Bảo
-            </div>
-            {/* [@media(min-width:1100px)]:text-xl */}
-            <div className="text-sm 13inch:text-base">ID: {params.userId}</div>
+            <h4 className="text-2xl font-bold">Lâm Hoài Bảo</h4>
+            <span className="text-base">ID: {params.userId}</span>
           </div>
           <div className="w-full flex gap-4">
             {listItemInfo.map(i => (
@@ -143,12 +140,11 @@ const PageDetailsUser: NextPageWithLayout = () => {
         color="primary"
         classNames={{
           base: 'bg-white pb-4 rounded-b-2xl mb-3 pt-2 ',
-          tabList:
-            'gap-6 w-full relative rounded-none p-0 border-b border-divider mx-6',
+          tabList:'gap-6 w-full relative rounded-none p-0 border-b border-divider mx-6',
           cursor: 'w-full bg-[#246BFD]',
           tab: 'max-w-fit px-2 h-12',
-          tabContent:
-            'group-data-[selected=true]:text-[#246BFD] font-[600] text-xs 13inch:text-base',
+          tabContent:'group-data-[selected=true]:text-[#246BFD] font-[600] text-xs 13inch:text-base',
+          panel: 'px-0'
         }}
       >
         {item => (

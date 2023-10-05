@@ -1,16 +1,17 @@
+import { useState } from 'react'
 import { useRouter } from 'next/router'
 
 import TotalEmployee from '@/components/form/summary'
 import { SearchIcon } from '@/components/icon'
 import TableComponent from '@/components/table/table'
-
-import { Button, Input, useDisclosure } from '@nextui-org/react'
-import { Add, CloseCircle, Filter, Man, Woman } from 'iconsax-react'
 import DefaultModal from '@/components/modal'
 import SearchInput from '@/components/input/search'
 import { ToastComponent } from '@/components/Toast'
-import { useState } from 'react'
 import SelectButton from '@/components/SelectButton'
+import Pagi from '@/components/pagination'
+
+import { Button, Input, useDisclosure } from '@nextui-org/react'
+import { Add, CloseCircle, Filter, Man, Woman } from 'iconsax-react'
 
 const BussinessCustomer = () => {
   const router = useRouter()
@@ -90,8 +91,13 @@ const BussinessCustomer = () => {
   const [select, setSelect] = useState<boolean>(false)
 
   const [listSelected, setListSelected] = useState([])
+
+  //pagination
+  const [page, setPage] = useState<number>(1)
+  const rowsPerPage = 3
+
   return (
-    <div className="">
+    <>
       <TotalEmployee title={'Tổng số lượng doanh nghiệp'} quality={500} />
       <div className="flex justify-between mt-8">
         <SelectButton
@@ -125,16 +131,19 @@ const BussinessCustomer = () => {
       <div className="mt-8">
         <TableComponent
           columns={columns}
+          page={page}
+          setPage={setPage}
+          rowsPerPage={rowsPerPage}
           initialData={initialData}
-          rowsPerPage={8}
+          onRowAction={id => router.push(`customer-management/bussinessId=${id}`)}
           multiSelectTable={select ? 'multiple' : 'single'}
           handleSelected={setListSelected}
-          onRowAction={id =>
-            router.push(`customer-management/bussinessId=${id}`)
-          }
         />
       </div>
-    </div>
+      <div className='absolute bottom-5 w-full'>
+        <Pagi totalItem={8} page={page} onChange={page => setPage(page)} totalPage={Math.ceil(initialData.length / rowsPerPage)} />
+      </div>
+    </>
   )
 }
 
@@ -143,8 +152,7 @@ export default BussinessCustomer
 const FilterComponentBussinessCustomer = () => {
   const { isOpen, onOpenChange, onOpen, onClose } = useDisclosure()
 
-  const [searchJobValue, setSeatchJobValue] = useState('')
-  const [selectedGender, sSelectedGender] = useState<string>('')
+  const [selectedGender, setSelectedGender] = useState<string>('')
   const [selectedRank, setSelectedRank] = useState<string[]>([])
 
   const optionsGender = ['Nam', 'Nữ']
@@ -244,7 +252,7 @@ const FilterComponentBussinessCustomer = () => {
                           value={e}
                           name="gender"
                           checked={selectedGender.includes(e)}
-                          onChange={() => sSelectedGender(e)}
+                          onChange={() => setSelectedGender(e)}
                           hidden
                         />
                         <label
@@ -279,7 +287,7 @@ const FilterComponentBussinessCustomer = () => {
           <>
             <Button
               onClick={() => {
-                sSelectedGender('')
+                setSelectedGender('')
                 setSelectedRank([])
               }}
               size="md"

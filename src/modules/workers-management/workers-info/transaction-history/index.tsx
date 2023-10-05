@@ -1,6 +1,7 @@
-import React from 'react'
+import React, {useState} from 'react'
 
 import TableComponent from '@/components/table/table'
+import Pagi from '@/components/pagination'
 
 const TransactionTab: React.FC = () => {
   const columns = [
@@ -60,21 +61,26 @@ const TransactionTab: React.FC = () => {
         return cellValue
     }
   }
+
+  //pagination
+  const [page, setPage] = useState<number>(1)
+  const rowsPerPage = 3
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex justify-between items-end">
-        <p className="text-base 13inch:text-xl font-semibold text-base-black-1">
-          Lịch sử giao dịch của thợ
-        </p>
-        <span className="font-normal text-sm 13inch:text-base">
-          ID ví: 123456
-        </span>
+        <p className="text-base 13inch:text-xl font-semibold text-base-black-1">Lịch sử giao dịch của thợ</p>
+        <span className="font-normal text-sm 13inch:text-base">ID ví: 123456</span>
       </div>
       <TableComponent
         columns={columns}
+        page={page}
+        setPage={setPage}
+        rowsPerPage={rowsPerPage}
         initialData={initialData}
         renderCell={renderCell}
       />
+      <Pagi totalItem={8} page={page} onChange={page => setPage(page)} totalPage={Math.ceil(initialData.length / rowsPerPage)} />
     </div>
   )
 }

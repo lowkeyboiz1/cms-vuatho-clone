@@ -358,13 +358,13 @@ const CancellationRatio: React.FC = () => {
   ]
   return (
     <div className="space-y-6">
-      <h5 className="text-lg 13inch:text-2xl font-bold text-base-black-1">
+      <h5 className="text-lg 13inch:text-xl font-bold text-base-black-1">
         Phân tích tiến trình
       </h5>
       <div className={styles.displayGridCancellationRatio}>
         {listCancelRatio.map((e, i) => (
           <div key={e.title} className={styles.formShadow}>
-            <div className="flex justify-between text-lg 13inch:text-2xl text-primary-blue font-bold">
+            <div className="flex justify-between text-lg 13inch:text-xl text-primary-blue font-bold">
               <span>{i + 1}</span>
               <span>{e.title}</span>
             </div>
