@@ -12,7 +12,7 @@ const initialState: AuthState = {
     isAuth: false,
     isLoading: true,
     email: '',
-    full_name: ""
+    full_name: '',
   },
 }
 
@@ -21,7 +21,12 @@ export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setLogout: () => initialState,
+    setLogout(state) {
+      state.userInfo = {
+        ...initialState.userInfo,
+        isLoading: false,
+      }
+    },
     updateUserInfo(state, action) {
       state.userInfo = {
         ...state.userInfo,

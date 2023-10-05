@@ -12,7 +12,6 @@ const authService = {
     }
   },
   async authGetMe(): Promise<any> {
-    console.log(axiosClient)
 
     try {
       const data = await axiosClient.get(`${prefixAPI}/get-me`)

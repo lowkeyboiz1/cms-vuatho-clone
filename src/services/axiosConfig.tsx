@@ -75,6 +75,8 @@ instance.interceptors.response.use(
   error => {
     if (process.env.NODE_ENV !== 'production') {
       if (error?.response) {
+        console.log(error)
+
         console.log('====== Server Error =====')
       } else if (error?.request) {
         console.log('====== Timeout =====')

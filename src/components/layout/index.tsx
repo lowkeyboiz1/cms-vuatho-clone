@@ -46,7 +46,6 @@ export default function Layout({ children }: IAppProps) {
           authAction.updateUserInfo({
             isLoading: false,
             isAuth: false,
-            name: '',
           }),
         )
       }

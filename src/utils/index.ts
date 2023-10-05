@@ -60,3 +60,58 @@ export const convertTypeQuestion = (data: any) => {
   })
   return formatData
 }
+
+import {getDocument} from 'pdfjs-dist';
+export const generatePdfThumbnail = (file: any) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = function (event: any) {
+      getDocument(event.target.result).promise.then(function (pdf) {
+        pdf.getPage(1).then(function (page) {
+          var viewport = page.getViewport({ scale: 1 });
+          var canvas = document.createElement('canvas');
+          var context = canvas.getContext('2d');
+
+          if (context) {
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+  
+            page.render({
+              canvasContext: context,
+              viewport: viewport
+            }).promise.then(function () {
+              resolve(canvas.toDataURL());
+            });
+          } else {
+            reject(new Error('Không thể lấy được context của canvas.'));
+          }
+        });
+      });
+    };
+    reader.readAsArrayBuffer(file);
+  });
+};
+
+export const generateVideoThumbnail = (file: any) => {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const video = document.createElement('video');
+    video.src = url;
+    video.onloadedmetadata = function() {
+      video.currentTime = 100;
+    };
+    video.onseeked = function() {
+      const canvas = document.createElement('canvas');
+      canvas.height = video.videoHeight;
+      canvas.width = video.videoWidth;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        reject(new Error('Unable to get canvas context'));
+        return;
+      }
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const thumbnail = canvas.toDataURL('image/jpeg');
+      resolve(thumbnail);
+    };
+  });
+};

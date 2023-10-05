@@ -68,18 +68,11 @@ const NotiInHeader: React.FC = () => {
 
 const AvatarInHeader: React.FC = () => {
   const userInfo = useSelector((state: RootState) => state.auth.userInfo)
-  console.log(userInfo)
 
   const dispatch = useDispatch()
   const handleLogout = () => {
     localStorage.removeItem('access_token')
-    dispatch(
-      authAction.updateUserInfo({
-        isLoading: false,
-        isAuth: false,
-        name: '',
-      }),
-    )
+    dispatch(authAction.setLogout())
   }
   return (
     <Dropdown placement="bottom-end">

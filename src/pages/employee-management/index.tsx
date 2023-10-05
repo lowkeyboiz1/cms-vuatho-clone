@@ -13,6 +13,7 @@ import SummaryForm from '@/components/form/summary'
 import { Button, Input, Tabs, Tab } from '@nextui-org/react'
 import { SearchIcon } from '@/components/icon'
 import { Add, Filter } from 'iconsax-react'
+import Pagi from '@/components/pagination'
 
 const Page: NextPageWithLayout = () => {
   const dispatch = useDispatch()
@@ -20,8 +21,8 @@ const Page: NextPageWithLayout = () => {
   useEffect(() => {
     dispatch(
       breadcrumbAction.updateBreadcrumb([
-        {title: 'Trang chủ', url: '/'}, 
-        {title: 'Quản lí nhân viên Vua Thợ'}
+        { title: 'Trang chủ', url: '/' },
+        { title: 'Quản lí nhân viên Vua Thợ' },
       ]),
     )
   }, [])
@@ -218,7 +219,9 @@ const EmployeeTab: React.FC = () => {
   //pagination
   const [page, setPage] = useState<number>(1)
   const rowsPerPage = 3
+  const [select, setSelect] = useState<boolean>(false)
 
+  const [listSelected, setListSelected] = useState([])
   return (
     <div className="">
       <SummaryForm title="Tổng số lượng nhân viên" quality={1000} />
@@ -263,9 +266,18 @@ const EmployeeTab: React.FC = () => {
           page={page}
           setPage={setPage}
           rowsPerPage={rowsPerPage}
-          multiSelectTable="multiple"
+          multiSelectTable={select ? 'multiple' : 'single'}
+          handleSelected={setListSelected}
           initialData={initialData}
           onRowAction={id => router.push(`employee-management/${id}`)}
+        />
+      </div>
+      <div className="absolute bottom-5 w-full">
+        <Pagi
+          totalItem={8}
+          page={page}
+          onChange={page => setPage(page)}
+          totalPage={Math.ceil(initialData.length / rowsPerPage)}
         />
       </div>
     </div>

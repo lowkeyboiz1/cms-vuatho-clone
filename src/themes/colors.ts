@@ -12,6 +12,7 @@ type TColorsConfig = {
   'base-drak-gray': '#969696'
   'primary-red': '#FF4343'
   'primary-green': '#17D641'
+  'primary-orange': '#FF8F34'
   danger: '#FF4343'
   success: '#17D641'
 } & DefaultColors
@@ -28,6 +29,7 @@ export const colorsConfig: TColorsConfig = {
   'base-drak-gray': '#969696',
   'primary-red': '#FF4343',
   'primary-green': '#17D641',
+  'primary-orange': '#FF8F34',
   danger: '#FF4343',
   success: '#17D641',
 }
