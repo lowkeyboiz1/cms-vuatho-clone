@@ -40,9 +40,9 @@ const Page: NextPageWithLayout = () => {
   useEffect(() => {
     dispatch(
       breadcrumbAction.updateBreadcrumb([
-        'Trang chủ',
-        'Quản lí câu hỏi',
-        'Tạo mới',
+        { title: 'Trang chủ', url: '/' },
+        { title: 'Quản lí câu hỏi', url: '/question-management' },
+        { title: 'Tạo mới' },
       ]),
     )
   }, [])
@@ -241,7 +241,6 @@ const Page: NextPageWithLayout = () => {
             services: [1],
             type: selectedQuestionOptions,
           },
-          
         ],
       }
 
