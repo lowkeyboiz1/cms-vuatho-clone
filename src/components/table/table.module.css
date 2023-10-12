@@ -1,0 +1,22 @@
+.wrapperTable {
+  @apply min-h-[222px] p-0;
+  box-shadow: 4px 4px 16px 0px rgba(0, 18, 38, 0.08);
+}
+
+.thTable {
+  @apply py-4 text-xs 13inch:text-sm;
+  background-color: #f1f6ff;
+  border-bottom-left-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
+  color: #246bfd;
+  /* padding-top: 16px;
+    padding-bottom: 16px; */
+}
+
+.tbodyTable {
+  @apply divide-y divide-[#F8F8F8];
+}
+
+.tdTable {
+  @apply py-3 text-xs 13inch:text-sm relative;
+}

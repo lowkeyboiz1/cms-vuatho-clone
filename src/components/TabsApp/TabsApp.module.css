@@ -1,0 +1,15 @@
+.tabList {
+  padding-left: 0;
+  gap: 12px;
+}
+
+.tab {
+  /* /* font-size: 16px; */
+  margin-left: 16px;
+  margin-right: 16px;
+}
+
+.cursor {
+  color: #327eee;
+  z-index: 10;
+}

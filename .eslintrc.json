@@ -1,0 +1,24 @@
+{
+  "root": true,
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "parserOptions": {
+    "parser": "babel-eslint"
+  },
+  "extends": [
+    "next/babel",
+    "plugin:prettier/recommended",
+    "next/core-web-vitals"
+  ],
+  "plugins": [],
+  "rules": {
+    "semi": ["error", "never"],
+    "prettier/prettier": [
+      "error",
+      { "singleQuote": true, "parse": "flow", "endOfLine": "auto" }
+    ],
+    "camelcase": "off"
+  }
+}

@@ -1,0 +1,35 @@
+.tabContent {
+  @apply group-data-[selected=true]:text-white font-[600] text-sm 13inch:text-base;
+}
+
+/* Chất lượng đầu vào của thợ */
+.displayGridWorkEval {
+  @apply grid grid-cols-3 gap-6 mt-3;
+}
+
+.bgFormItemWorkEval {
+  @apply bg-primary-blue-2;
+}
+
+.textRatingWorkEval {
+  @apply text-[#246BFD];
+}
+
+/* Điểm dịch vụ */
+.displayGridServiceEval {
+  @apply grid grid-cols-3 gap-6;
+}
+
+/* Tỉ lệ huỷ đơn */
+.displayGridCancellationRatio {
+  @apply grid grid-cols-4 gap-6;
+}
+
+/* Chung */
+.formShadow {
+  @apply shadow-[4px_4px_16px_0px_rgba(0,18,38,0.08)] rounded-xl p-6 mt-4;
+}
+
+.distanceForm {
+  @apply space-y-8;
+}
